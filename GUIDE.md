@@ -15,7 +15,8 @@ For manual installation, copy the ZIP's `plugins/VariantWeaver` folder into `Bep
 | Control | What it does |
 | --- | --- |
 | **F8** | Open WeaverEditor or the player menu |
-| **/warp** | Open public warp destinations |
+| **/warp** | Open public warp destinations; no assigned role required |
+| **/warp <destination name>** | Travel directly to a public saved destination |
 | **/kit** | Open public kits |
 | **/return** | Return to the departure point of your last successful WeaverEditor teleport |
 | **/tp <player name>** | Ask another player to allow your teleport; requires teleport permission |
@@ -49,6 +50,14 @@ Open **F8 → My Vendors** to manage your shops. **Earnings** holds payments fro
 **Appearance** changes the vendor's name, title, body, hair, beard, colours, outfit and pose. Choose clothing and held items under **Outfit & pose**. These are visual choices; they do not create inventory items or shop stock. Players can only list items they deposit and collect items already held by their own vendor.
 
 **Pack vendor** removes it from the world and keeps its stock and earnings in My Vendors. Use **Place again** to move it without another deed. Only the owner or a server admin can change its appearance or pack it; stock and earnings can only be collected by the owner. Packed vendors still count towards the owner's limit.
+
+### Remove a vendor as an admin
+
+Open **F8 → My Vendors**, find the vendor and choose **Remove vendor**. The shop menu has the same control. Review its name and owner, then confirm.
+
+Removal takes the NPC out of the world and retires the shop. It cannot sell, receive stock or be placed again. Its owner can still collect the saved stock and earnings through **My Vendors**. Admins cannot collect another player's items.
+
+Use **Show removed** to review retired vendors. A trade already in progress must finish before removal. Removed vendors no longer count towards the active vendor limits; recovery records remain saved.
 
 ### Vendor limits and backups
 
@@ -85,7 +94,7 @@ Set it back to `false` to let players choose their own display setting. Everyone
 
 The player menu has **Travel**, **Kits**, **Quests**, **Appearance** and **My Vendors** pages. Travel cards show readiness, cooldown and optional distance/coordinates. The **Return to departure** button uses the same WeaverEditor-only return as **/return**.
 
-Kit cards show availability and item previews. Expand a card to see quantities and the complete contents. Search kits and travel points by name. Claiming kits and using travel still use the existing server permissions, restrictions and cooldowns.
+Kit cards show availability and item previews. Expand a card to see quantities, chances and the complete contents. Search kits and travel points by name. Claiming kits and using travel follow the server permissions, restrictions and cooldowns.
 
 The quest journal has Active, Finished and All filters. Quest cards show instructions, item counts, destination distance and timers when those values are supplied by the quest. Use the tracked toggle to hide or restore a quest in the HUD. Full instructions remain available in the journal when a tracker row is too short. Abandoning or dismissing a quest still requires confirmation.
 
@@ -137,7 +146,7 @@ Weight is checked against the current carry limit. The item setting checks the n
 
 The travelling player's inventory is checked again immediately before travel, including after another player accepts a pending request. Blocked travel explains why and keeps the previous return point. A rejected warp refunds its warp cooldown; the short anti-spam/retry timers still apply. Store restricted items or reduce weight, then try again. Normal portals and other mods' teleport commands are unchanged.
 
-Install **1.2.3 on the server/host and every client**. Older client builds do not implement these checks. Custom storage supplied by another mod must expose its contents through the player's inventory to be inspected.
+Install **1.2.8 on the server/host and every client**. Older client builds do not implement these checks. Custom storage supplied by another mod must expose its contents through the player's inventory to be inspected.
 
 The admin **Settings → Server rules** panel shows whether each restriction is enabled. Change the settings in the host's config, not in personal Appearance options.
 
@@ -158,6 +167,34 @@ Use **/return** to go back to where your last successful WeaverEditor teleport s
 Example: WeaverEditor takes you from your base to a town, then you use a normal portal. **/return** goes back to the base; the normal portal does not replace the WeaverEditor departure point.
 
 A newer successful WeaverEditor teleport replaces the saved point. Failed travel keeps the old point. A successful return consumes it instead of creating a back-and-forth toggle. Return points are session-only and clear when you leave the world or disconnect. A short retry cooldown applies, along with existing WeaverEditor combat and travel restrictions.
+
+## Public /warp access
+
+**New players and players without an assigned role can use public saved warps.** Type **/warp** to open the destination list, or travel directly with an exact, case-insensitive destination name:
+
+```text
+/warp Town Square
+/warp "Town Square"
+```
+
+These are saved destinations, not `/tp` requests to other players. No player acceptance or role assignment is needed for a public warp. Duplicate names ask you to choose from the menu instead of picking an arbitrary destination.
+
+Create a destination under **F8 → Travel → New warp here**. **Available to everyone with /warp (no role needed)** is enabled for new destinations. Existing public warps remain public. Existing private warps are not silently opened: select one, enable that option, and **Save warp** once to open it to every current and future player. You do not have to register or assign each player.
+
+The host/server controls this with its existing setting in `BepInEx/config/com.variantmods.weaver.cfg`:
+
+```ini
+[Server rules]
+Public travel = true
+```
+
+It defaults to `true`; a previously saved `false` setting is respected. Enable it on the host/server and restart if you intentionally disabled public travel earlier. Client config cannot override it. Private warps still require **players.teleport**; creating/editing/deleting warps still requires **world.edit**. Public warps do not grant `/tp`, Bring, coordinate teleports, editing or Costume access.
+
+Menu travel, `/warp <name>` and placed warp portals use the same server-checked destination and per-player cooldown. Enabled combat, encumbrance and restricted-item rules still apply. The existing successful-trip `/return` and failure/refund handling stay in place. No warp can supply its own client-chosen coordinates or move another player.
+
+**Block travel with non-teleportable items** checks carried items, equipment, extra slots and supported backpacks. It reads modded item restrictions too. Vanilla metals and Dragon Eggs stay blocked even if a portal mod changes their item flag. The message names the blocked item; overweight travel has its own message. If a carried inventory cannot be read, travel waits until it can be checked.
+
+These rules apply to WeaverEditor travel, including homes, checkpoints and graph teleports. Normal Valheim portals keep their own rules. Existing server settings are kept when updating. **Personal travel → Require owned ward for homes** controls the owned-ward rule and starts enabled.
 
 ### Teleport to an online player
 
@@ -182,17 +219,45 @@ On approval, the server checks the original player sessions, the sender's curren
 
 Only a successful approved trip creates or replaces the travelling player's WeaverEditor return point. Denied and expired requests do not alter `/return`. This consent prompt applies to `/tp`, **Teleport to player** and **Bring player here**. Normal portals, named WeaverEditor warp destinations and quest-graph travel do not show this consent prompt. Enabled travel restrictions still apply to all WeaverEditor teleports.
 
-Install **1.2.3** on the **server/host and every client**. Earlier builds without teleport approval do not implement this handshake: an old server can still have immediate-teleport behavior, while an old recipient client cannot display the request and it will expire.
+Install **1.3.2** on the **server/host and every client**. Earlier builds without teleport approval do not implement this handshake: an old server can still have immediate-teleport behavior, while an old recipient client cannot display the request and it will expire.
+
+## Admin Costume
+
+Open **F8 → Costume** in the admin menu. This category uses **admin.powers**, not public /warp access. Native admins and explicitly delegated admin-powers roles can use it; disabling **Allow admin powers** also disables costumes and removes active ones.
+
+Search by model name or prefab ID, or filter **NPCs & creatures**, **Objects**, **Buildings** or **Items**. The list is built from registered content on your installation in small batches. Choose a model, then press **Wear / update costume**. Every viewer needs this build and the relevant content mod to see that model.
+
+**Size ×** accepts 0.1–5. Size 1 keeps the original size. **Edit current fit** loads your current settings, and **Reset fit** resets the size. **Remove costume** restores your player.
+
+Choose **Control creature movement and attacks** to use a creature's real movement, animation and attacks. **WASD** moves, **Shift** runs, and the mouse buttons attack. **R** switches between its available weapons. Flying creatures use **B** to take off or land, **Space** to rise and **Crouch** to descend. Ground creatures use Crouch to switch walking on or off. The camera follows the creature's eye height.
+
+Attacks use the creature's normal cooldown. The controls hint shows when it is ready again.
+
+Seagulls have bird controls. **WASD** walks or flies, **Shift** moves faster, **B** takes off or lands, **Space** rises and **Crouch** descends. Their native wing animation plays in flight. They have no native attack.
+
+All costume modes protect you from damage and NPC targeting. Controlled bodies are temporary and drop no loot. Your inventory stays intact, and removing the costume restores normal controls and your previous admin settings. Random creature calls are muted. Use **Hide my costume's name and health bar on my screen** to hide your own bar; other players' views stay unchanged. This setting is also under **Costume** in the config.
+
+WeaverEditor travel is unavailable while controlling a creature. Special attacks that depend on a mod's AI scripts may need a separate integration.
+
+Objects and appearance mode keep your normal movement and combat. **Facing degrees**, **Offset from your feet** and the optional idle/movement animation apply to appearance mode. Wearing a chest does not create storage.
+
+Death, logout, switching worlds/characters or losing admin powers clears the costume. It is not saved into your character or the world. The normal model is restored locally if rendering fails or server renewals stop. A failed model does not keep retrying every frame. Automatic changes are server-validated; a client cannot dress another player.
+
+Only standalone visible meshes are supported. Effect-only, script-generated player/NPC equipment (`Player` and `VW_Npc`), models over 2,048 transforms / 256 mesh renderers / 2 million mesh vertices, and missing content are not selectable. Some custom rigs or equipment-driven NPCs can look static or simplified. This is not a guarantee that every prefab from every mod renders correctly. Removing the costume is always the fallback. No desktop files or custom model uploads are used by this feature.
 
 ### Updating
 
-Install 1.2.3 on the server or host and every client. Keep **VariantWeaver.dll** and **VariantWeaver.Core.dll** together; remove old duplicate copies rather than leaving two versions installed. Back up and keep `BepInEx/config/VariantWeaver` and your existing WeaverEditor config. This package does not replace saved quests, NPCs or world configuration.
+Install 1.3.2 on the server or host and every client. Keep **VariantWeaver.dll** and **VariantWeaver.Core.dll** together; remove old duplicate copies rather than leaving two versions installed. Back up and keep `BepInEx/config/VariantWeaver` and your existing WeaverEditor config. This package does not replace saved quests, NPCs or world configuration.
 
 ## Menu and editor
 
 NPCs, zones, chests and spawners have a searchable browser with enabled and linked status. Select an object to open its settings; expand **Browse** to choose another. Your unsaved object edits stay available while switching within the session.
 
-**Community → Kits** has a compact item list. Search, change quantities directly, or select an item to change it. **Merge duplicate items** combines matching entries. Save stays at the bottom of the panel. Kits allow 60 rows and 1,000 items per row by default; the server owner can change those limits.
+**Community → Kits** has a compact item list. Search, change quantities directly, or select an item to change it. Set **Chance (%)** separately for each entry, then **Save kit**. 100% always gives the full quantity; 0% never gives it. Fractional chances are allowed. Existing kits start at 100%.
+
+Each entry rolls once per claim. Chests and Give Kit actions use the same rules; spawners roll once per creature. A claim with no successful rolls still uses its cooldown. A full inventory rolls back the reward and releases the claim. **Merge duplicate items** combines guaranteed entries and keeps random entries separate so their odds stay the same.
+
+Save stays at the bottom of the panel. Kits allow 60 rows and 1,000 items per row by default; the server owner can change those limits.
 
 WeaverEditor keeps the current graph name and save state visible. Use the arrows to go back and forward, or **Graphs** to search All, Recent, Linked or Draft graphs. Names such as `Tavern / Greeter` group related graphs.
 
@@ -222,8 +287,32 @@ The config is created at `BepInEx/config/com.variantmods.weaver.cfg` after Weave
 | Server rules | Encumbrance and non-teleportable-item travel restrictions, public travel/kits, NPC conversations, previews, inspection, admin powers, debug/devcommands, draft autosave and history cleanup |
 | Storage | World content limit, saved revision limit and revisions retained per graph after cleanup |
 | Server performance | Active creatures and spawns per second |
+| Community | Clans, member limits and automatic ranks |
+| Personal travel | Homes, home limits and checkpoints |
+| Player trading | Nearby trading, distance and timeout |
+| Economy | Optional wallets, item deposits, currency precision, PayDay and TaxMan |
+| Server scenes | Allow camera and audio actions |
+| World images | Approved URL hosts, upload size up to 16 MiB, image dimensions and display scale up to 16 |
+| Server media | Admin imports and the shared media disk budget |
+| Media | Your local shared-file cache budget |
+| Action messages | Server text for combat, cooldown, permission and other refused actions |
+| Scenes | Your camera choice, shared server audio, separate Internet audio opt-in and audio volume |
 
-Change **Server rules**, **Storage** and **Server performance** on the server or host, then restart it. Clients cannot override server rules. WeaverEditor's debug/devcommands setting controls its own buttons; other mods keep their own controls. Normal portals are unchanged.
+Change server settings in the host's config. Changes to shared image limits, audio limits and action messages are sent to connected players within a few seconds; a restart is not required. Clients cannot override server rules. WeaverEditor's debug/devcommands setting controls its own buttons; other mods keep their own controls. Normal portals are unchanged.
+
+### Image, audio and refusal-message limits
+
+Under **World images**, set **Maximum image file size (MB)** from 1 to 16, **Maximum image dimensions** from 1024 to 4096, and **Maximum image scale** from 1 to 16. The server sends these limits to players. Existing uploaded images are kept when a limit is lowered; new uploads and URL downloads use the new values.
+
+Under **Server scenes**, set **Maximum audio file MiB** from 1 to 16. It applies to audio imports/downloads and is sent to connected players. Players can turn shared server audio and Internet audio off independently.
+
+Under **Action messages**, edit the text shown when travel or another server action is refused. Keep the placeholders shown in the setting, such as `{seconds}`, `{reason}` and `{action}`. For an exact old message, add one line to **Other message overrides** in this form:
+
+```text
+Original server message => Your replacement message
+```
+
+These settings change the wording only. The server still enforces the same rules.
 
 **History → World storage** shows the space used by published graphs, drafts, revisions and player state. Only the server owner can clean earlier revisions. Cleanup first saves the full world file under `BepInEx/config/VariantWeaver/backups`; current graphs, drafts and links are kept.
 
@@ -263,6 +352,8 @@ Choose a colored node shortcut, then edit its settings inside the card. **Action
 | **Repeat / Call Graph** | Run a bounded loop or call another published graph |
 
 Click an **output pin**, then an **input pin** to connect them. Conditions use **True** when the check passes and **False** when it fails. Actions with True/False outputs use them for success and failure. Add a failure message where players need to know why something could not happen.
+
+Open **Setup and links** and choose **Delete graph**, then confirm. WeaverEditor keeps the graph if it is still linked to an NPC, zone, chest, schedule, waiting quest or reusable graph call; remove those links first.
 
 Dialogue continues through its output automatically; an Option waits for a player response. A Wait after Dialogue delays the next step. Several connections on a normal output can run several branches; use Options for player choices and Randomiser for a random choice.
 
@@ -317,6 +408,8 @@ Create a sphere or box under **Zones**, place it and save it. In the graph's **L
 
 **View zone** shows the area with WeaverEditor out of the way; press **Esc** to return. **World markers** shows nearby zones and spawner eggs while moving around.
 
+Zone previews have translucent walls and clear outlines, including the full sphere surface. Adjust **Settings → Appearance → Zone wall opacity** to make them stronger or lighter. Set it to 0 for outlines only. These previews are visible only to admins with zone editing permission.
+
 For a starting example, use **World → Encounters** to create a linked spawner, zone, reward chest and graph. The chest unlocks after the encounter is cleared and locks again on restart.
 
 ### Set up a reward chest
@@ -338,6 +431,126 @@ Keys can be ordinary items or one of eight WeaverEditor key types. Issue a perso
 | **NPC routines** | Add poses, nearby greetings and patrol points. Set Pause to 0 for continuous walking or use seconds for a stop at each point. Patrols follow straight paths; keep them clear of walls. NPCs pause while talking and when nobody is nearby. |
 
 WeaverEditor travel is blocked during combat and for **20 seconds afterward**, including NPC, graph and admin teleports. Blocked trips do not spend the warp cooldown; teleport actions follow False. Normal Valheim portals work as usual.
+
+## Portals, lights, pictures and notes
+
+Under **Travel**, create a destination, then add a **World portal** and choose that destination. Place and save it. Players press **E** to travel; access, cooldown and combat rules still apply. Removing its destination leaves the portal inactive until you link another one.
+
+Open **World → Props** and choose Lights, Images & flags or Notes. Create the prop, set its appearance, place it and save. For images, turn off **Show wooden backboard** to display just the image. Flags have a **Show wooden flag pole** toggle. Existing images keep their backing until you change it.
+
+Only server admins can place, edit or remove these portals and props. Players can use portals and read notes.
+
+- **Lights:** save a light type with RGB or hex colour, brightness and range, then use **Place copies of saved type**. Each click adds a separate light; Esc finishes. Editing a type updates all copies. Select a copy to move or remove it. Shadows are limited to eight placed lights.
+- **Images:** click **Browse / Import image…** or **Choose from media library**, select a PNG/JPG and save the placement. Windows Browse opens your PC’s normal file explorer. Other platforms can paste a full path into **Media library → Local file path** and choose **Import file from path**. The host/server stores shared files once. Limits are up to 16 MiB and 4096 × 4096, with display scale up to 16. Library thumbnails show the saved files; pictures keep their proportions.
+- **Image URLs:** choose **Switch this draft to an approved URL** when necessary, enter a direct image link and save the placement. Approve its host in **World images → Allowed image hosts** on the server. Uploaded files work without an external website.
+- **Flags:** turn on **Tall flag shape** for a portrait display.
+- **Picture facing:** the gold **FRONT** arrow points out from the picture side while placing images or flags. Use **Q/E** to turn them.
+- **Notes:** write plain text, up to 4,000 characters. Players press **E** nearby to read it.
+
+## Community hub
+
+Players and admins can open the Community hub from **F8**.
+
+- **Clans:** create a clan, invite players, accept invitations and manage membership. Leaders can transfer leadership or disband. Admins can manage all WeaverEditor clans.
+- **Homes:** use **/sethome Name**, **/home Name** and **/delhome Name**. Saving or moving a home requires an active ward owned by your character. Being permitted in someone else's ward does not qualify. Homes are private and obey WeaverEditor travel restrictions.
+- **Checkpoints:** a **Set Checkpoint** action saves the NPC/zone location or a chosen travel destination. **Has Checkpoint** checks it and **Clear Checkpoint** removes it. Players choose whether to use it after death.
+- **Ranks:** admins create permission-free ranks and set promotion rules for playtime or completed quests. **Grant Rank** and **Remove Rank** actions can change them in a graph. These actions cannot grant admin access.
+
+The server controls these features and their limits. Turning a feature off keeps its saved data.
+
+### Guilds and Groups
+
+Guilds and Groups are optional. Under **Community → Clans**, admins choose **Auto**, **Weaver** or **Guilds** as the clan provider. Auto uses Guilds when its server membership is ready; otherwise it uses WeaverEditor clans. Your saved WeaverEditor clans are kept when you switch.
+
+Use the original Guilds menu to create and manage external guilds. **Has Guild**, **In Guild**, **Is Guild Leader** and **Same Guild** conditions read membership from the server. If Guilds is missing or unavailable, those checks follow False.
+
+Groups can show your party in the Community hub. Its current API provides personal client data, so **Has Group** cannot unlock server rewards and follows False. Admins can turn both integrations off in the same page or the **Integrations** config section.
+
+## Player trading and wallets
+
+Open **/trade**, choose a nearby player and send an invitation. The other player opens **/trade** to accept. Deposit the items you want to offer, then review both sides and confirm. Changing an offer clears both confirmations.
+
+The server holds deposited items until both players confirm. Moving too far away, disconnecting, cancelling or a timeout ends the trade. Items return through saved recovery parcels. If your inventory is full or an item mod is missing, make room or restore the mod and click **Collect**.
+
+**/wallet** opens the optional server wallet. It starts disabled. Admins can enable it, name the currency and choose an ordinary item for deposits and withdrawals. Wallet payments can be included in player trades. Existing physical Coin actions keep their original behaviour.
+
+Admins can adjust accounts under **Wallet → Admin accounts**. **Economy settings** controls PayDay payments and TaxMan percentage taxes; both start off. Currency precision is chosen for a new world and stays fixed once balances exist.
+
+Use **Has Wallet Funds**, **Give Wallet Funds** and **Remove Wallet Funds** for wallet amounts in graphs. Enter a decimal amount in the node's Amount field.
+
+## Numeric entry and zoomed-out nodes
+
+Type directly into number boxes, including with the numeric keypad. Decimal fields accept `0.25` or `0,25`; partially typed values such as `-` and `0.` remain visible while editing. Press Enter or leave the field to finish. Counts and other integer-only settings still require whole numbers, and each setting keeps its normal limits. Input lettering stays readable even when Valheim-style lettering is chosen for headings.
+
+Zoomed-out graph cards show their action and saved asset name, such as **Play Audio / Music**, rather than an internal ID. Missing assets show a readable missing-reference label. Zoom in or use Focus to edit the card’s fields.
+
+## Camera shots, audio and skills
+
+Open **F8 → World → Scenes** for Camera shots, Audio tracks, Media library, Setups and Groups. The existing graph node toolbar stays in place.
+
+### Place and aim cameras
+
+Create a shot and choose **Add free camera**. Mouse movement aims; **WASD** flies, **Q/E** moves down/up, **Shift** is faster, **Ctrl** is slower and the wheel changes FOV. **Left-click** places a camera and keeps the rig active for the next one. **Enter** also places. **Esc** finishes and retains the draft; **Save shot** persists it to the host/server. Repositioning replaces the selected point on the first click; later clicks append new points.
+
+Each shot supports 16 points. Select a point to change its label, world position, pitch, yaw, roll and field of view. Text boxes support decimals, with steppers/sliders for small changes. **Look through** holds that draft camera view until Esc. **Preview from here** starts the current draft at the selected camera; **Preview this draft** starts from the beginning. Previewing does not require overwriting the saved shot.
+
+**Show camera models, labels and direction arrows** shows the selected shot’s local editor markers and connecting path. Labels include the shot and point names. Markers are not persistent world props and are hidden during scene playback. All shot points must stay within 500 metres of the player who receives the scene, so the camera remains in their loaded area. Playback hides the HUD/crosshair. **Stop Camera**, Esc, death or leaving the world restores the camera.
+
+### Per-camera timeline
+
+Existing shots retain legacy travel/final-hold timing. Enable **Use per-camera timeline** to give every point its own settings. The first point starts immediately; each later point controls travel *into* that camera. Choose **Cut** for an instant change, **Linear** for constant-speed interpolation or **Smooth** for an eased start/stop. Moving segments allow 0–20 seconds and every camera holds for 0–30 seconds, including decimals. A whole timeline is limited to 600 seconds.
+
+Click a timeline card to edit it. Drag it onto another card to reorder, or use **Earlier / Later**. Music/subtitle cue timestamps stay at their absolute time when cards move; check them after reordering or shortening the shot. Invalid cues beyond the new end must be moved or removed before saving.
+
+Add a **Music cue**, **Dialogue cue** or **Stop audio cue** at a chosen number of seconds. Dialogue cues are cinematic text captions, not interactive NPC conversations; each can display for 1–30 seconds with up to 500 characters. A shot supports 64 cues. Timeline Stop audio affects that scene’s cue track. **Stop this scene’s timeline audio when it finishes** defaults on. Turning it off lets that track continue under its own duration/loop rules, but leaving its parent zone still clears it. Esc cancels the scene and its cue music.
+
+### Shared image and music library
+
+Open **Media library** to search and page through imported files, see image thumbnails or preview 30 seconds of an audio file. **Browse / Import image…** and **Browse / Import audio…** open the Windows file dialog on the editing PC—not on the remote dedicated server. **Local file path → Import file from path** is the non-Windows alternative. Desktop drag-and-drop is not a control in this version.
+
+The chosen file uploads to the host/dedicated server with progress and a Cancel control. Authenticated server admins may import, rename, replace or remove entries. Uploads are limited by type, size, checksum and storage budget. PNG/JPG/JPEG images use the server’s image bounds; MP3, Vorbis OGG and WAV audio use its 1–16 MiB limit and a maximum decoded duration of 10 minutes. Web pages, live streams and other OGG codecs are not supported media files.
+
+Import once, then choose that entry from any number of image placements or audio-track settings. Audio volume, fades, priority and loop settings belong to each saved track, not to another copy of the file. **Save audio** or save the image placement after selecting a file. Importing by itself creates the reusable library entry, not a world prop or playback graph.
+
+Select an entry and confirm **Replace everywhere** to upload a replacement into the same library identity. All saved images/tracks referencing it move to the new content hash. Already playing audio retains the old stream until it ends; subsequent plays use the replacement. Active editor drafts that used it are updated on the importing client. Other admins should refresh their drafts before saving. Renaming changes the library label, not the names of individual tracks/props. Referenced entries cannot be deleted until their saved track/image references are removed.
+
+Files live on the host/server in `BepInEx/config/VariantWeaver/media-<world ID>`. Existing pre-library image uploads stay in `images-<world ID>` and continue to work. **Back up both folders with `world-<world ID>.json` and its `.bak`.** Media bytes are not placed in graph/world JSON or the public mod ZIP. Graph exports do not carry the shared files with them.
+
+Under **Server media**, **Allow admin imports** can disable new imports, and **Storage budget MiB** defaults to 256 (32–2048 supported). There are up to 200 library entries. Replaced/deleted blobs remain on disk for saved-world backups and still count towards this quota; removal of a library entry is not a disk-cleanup action. Do not manually remove files still referenced by the world or backups. On each client, the reusable shared-file cache is under `BepInEx/cache/WeaverEditor/media`, bounded by **Media → Local cache budget MiB** (default 256; 32–1024). In-use streaming files stay pinned until released. This cache is not the authoritative server library.
+
+### Music zones, fades and priorities
+
+Under **Audio tracks**, create a track and choose a library file, Browse/Import one, or switch to a direct Internet URL. Imported music uses the player’s **Shared server audio** setting, on by default. Direct HTTP(S) audio still requires their separate **Internet audio** opt-in, off by default. Both respect the player’s scene volume. Server script permissions and audio size limits still apply.
+
+Set **Fade in seconds** and **Fade out seconds** (0–30, default 2), playback duration, loop and priority. A track priority and its zone’s **Music priority** are added; higher values take over. Equal-priority renewals remain stable instead of constantly switching. At most one main track and one outgoing fade are audible. Leaving the winning zone allows the lower-priority active zone to resume with a fade; renewing the same loop does not restart it. Scene cue music has precedence over regular zone tracks. These controls affect WeaverEditor music, not vanilla background music or other mods’ audio.
+
+**Stop Audio → Stop scope** defaults to **This zone / graph source**. An outer zone’s exit must not stop a newer inner-zone track. Choose **All scripted music for this player** only for a deliberate global stop. Stop begins a fade without holding the graph until silence. The server also clears departed/disabled/deleted zone owners, including after teleports, and cancels their pending playback. Source-scoped stops from zones should run through that zone’s enter/exit/stay graph bindings so they carry the same source identity.
+
+Nearby zone and timeline music can preload automatically when that audio source is enabled. Up to three candidates are sent ahead of entry, with four streaming clips in the client’s session cache. Use **Preload this audio** to prepare a selected draft without playing. **Clear local audio cache** stops scripted music and clears streaming/temporary URL entries; it does not erase the persistent shared-file library cache. Replacing a file at the same Internet URL needs this clear action or a new URL. Library replacements use content hashes automatically.
+
+Audio status shows Loading, Ready, Playing or Failed, plus recent startup timing for cold, disk-cached and memory-cached playback. The timings include transfer/cache work, file write, clip decode and the largest observed frame-update delta during preparation. They are local diagnostics, not a full Unity audio-profiler trace. The first uncached play can still take time, especially after teleporting directly into a zone. Preloading ahead of entry helps avoid starting a download at the same moment as playback.
+
+### Groups and direct world editing
+
+Open **Groups** or **Select objects in world** from the camera/prop screens. In selection mode, click a light, image, note or camera label/model to inspect it. **Ctrl/Shift-click** builds a multi-selection. Hold the **right mouse button** to look and fly with WASD/QE; Shift is faster, Ctrl slower and the wheel changes FOV. Without right mouse, the pointer stays available for editing. **Esc / Return to groups** ends selection.
+
+The side inspector edits position, facing, size, light appearance, image backing and camera fields. **Save placement / Save camera shot** persists the draft. A camera offers **Look through** and **Open full timeline**. Labels can be selected even when a light has no useful collider. The view limits the displayed labels to nearby visible objects to avoid covering the scene.
+
+Create a named group from the current selection or select its members on the Groups page. An object/point belongs to one group. Save, then use a translation offset to **Move** or **Duplicate** it. Copies get independent placement and camera IDs while reusing light types and media. Moving affects world objects, not only editor labels. The limits remain 200 placed props, 100 saved camera shots, 100 groups and eight shadow-casting lights.
+
+**Locked** prevents accidental saving/moving/removing of group members. Save the group unlocked before changing membership. Locking any camera point protects its whole shot from conflicting edits. **Hide editor markers** affects editor overlays, not actual lights/images/notes. Removing a group keeps its objects. Duplicating every point of a shot copies its timeline cues; duplicating only part of a shot creates a new shot without the original time-based cues, with a warning.
+
+For lights, keep **Override only this placement** off to inherit the saved light type. Updating that type changes all non-overridden copies. Turn it on to give one placement its own colour/hex code, brightness, range, enabled state, size and shadows. Turning it off reapplies the type. The eight-shadow-light limit counts all actual placed copies, not just saved types.
+
+### Ready-made setups
+
+Open **Setups** and choose **Music zone** or **Boss introduction**. Choose the centre/radius, audio track, zone priority and optional fades/loop settings. The boss version also chooses a saved camera shot and a saved or new creature spawner, with a global cooldown. Creature choices come from the installed game’s catalogue.
+
+**Create and enable** publishes the ordinary graphs, creates matching editable drafts and links/enables the zone immediately. Players already inside can trigger it. Check the location before confirming. A music zone creates enter/play, stay/renew and exit/stop graphs. A boss introduction links cooldown, music, camera and spawner; audio/camera opt-outs or an early end do not strand the graph before the encounter. Different loop/fade settings create a separate track-settings record but still reuse the imported file.
+
+These are normal graphs and zone/spawner records. Edit them with the existing toolbar and normal publish/link workflow. The wizard does not create a hidden template runtime that prevents later changes.
+
+**Set Skill Level** sets a native Valheim skill from 0 to 100. **Skill Level Range** checks its base saved level against inclusive bounds before temporary bonuses.
 
 ## Sharing graphs
 
@@ -372,14 +585,18 @@ Server performance defaults are **200 active WeaverEditor creatures** and **40 n
 | An event will not start | Check the saved zone binding, cooldowns, enabled state and spawner's live status. |
 | An imported graph has missing targets | Resolve its links and install the content mods its items or creatures need. |
 | Travel or kits are missing for players | Mark them public and save. |
-| Version mismatch or repeated old 1 MB warning | Update both server and clients to the same current build. The old hardcoded limit cannot be changed through config. |
+| Version mismatch or repeated old media-limit warning | Update both server and clients to the same current build. Image and audio limits come from the server config and are sent to connected players. |
+| Imported media stops working after moving the server | Copy the matching media/image folders with the world JSON; shared files are not bundled in graph exports. |
+| Browse does not open on Linux/macOS | Use a full local file path in Media library; the native picker is Windows-only. |
+| A group member cannot be saved | Save the group unlocked first; a locked camera point locks its shot. |
+| Music is silent | Check the matching Shared server audio / Internet audio setting, server script policy and the audio status/error. |
 | A server restart loses content | Check that the server retains its WeaverEditor config folder and world identity. Restore your backup if needed. |
 
 If an older build already cleared a link, select its NPC or zone and use **Publish & link** after updating. For unresolved problems, include the mod version, what you clicked and the relevant client/server `BepInEx/LogOutput.log`.
 
 ## Inspiration and credit
 
-WeaverEditor is inspired by [Pippi — User & Server Management](https://steamcommunity.com/sharedfiles/filedetails/?id=880454836) for Conan Exiles, created by **Joshtech (CoOkIeMoNsTeR)**. Credit to Joshtech for the NPC tools and visual quest editing that inspired this project. WeaverEditor is an independent Valheim mod, with its visual editor named **WeaverEditor**.
+WeaverEditor is inspired by [Pippi — User & Server Management](https://steamcommunity.com/sharedfiles/filedetails/?id=3725018456) for Conan Exiles, created by **Joshtech (CoOkIeMoNsTeR)**. Credit to Joshtech for the NPC tools and visual quest editing that inspired this project. WeaverEditor is an independent Valheim mod, with its visual editor named **WeaverEditor**.
 
 ### Journal icons
 
