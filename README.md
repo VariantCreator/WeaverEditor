@@ -12,7 +12,9 @@ Create conversations, shops and events for Valheim. Connect nodes to choose what
 * **🌀 Travel:** Create destinations and physical portals. Players use **/warp** or press **E** at a portal.
 * **🏮 World tools:** Place lights, pictures, flags and notes. Build camera scenes with music and subtitles.
 * **🤝 Community:** Use clans, trading, homes, checkpoints and optional wallets.
-* **🛠️ Admin tools:** Manage players, inspect inventories, run events and wear creature costumes.
+* **🛠️ Admin tools:** Manage players, recover graves, inspect inventories, run events and wear creature costumes.
+* **🎭 Costume rewards:** Give players creature movement and attacks through kits or graphs. They stay visible and take normal damage.
+* **🔍 Prop hunt:** Place a ready arena, join at its scoreboard and hunt the suspicious furniture with a wooden sword.
 
 ## 📦 Install
 
@@ -28,7 +30,21 @@ When updating, replace the old DLLs and **keep your configs**. WeaverEditor repl
 
 **Open the menu**
 
-Press **F8** in a world. Admins get editing tools. Players get Travel, Kits, Quests, Appearance, My Vendors and Community.
+Press **F8** in a world. Admins get editing tools. Players get Travel, Kits, Quests, Appearance, My Vendors, Community and Costumes, as allowed by the server.
+
+**Help a stranded Viking**
+
+Open **Players → Graves**, refresh the list and choose a grave. Move it to your position, coordinates or a saved recovery area. Its items stay in the original grave. Offline owners get a recovery message and map pin when they return. The walk of shame is optional.
+
+**Known players** keeps player records and staff notes. **History** helps you find who changed what and when.
+
+Select an online player and choose **Spectate** to follow them with your camera. Mouse looks around, the wheel changes distance, and **Esc** returns to your player.
+
+Under **Settings → Player menu visibility**, choose which F8 pages regular players see. You can hide Clans or Wallet without deleting anything or switching those features off. Admins keep every page.
+
+Changes to server settings through **F1** now go to the server for approval and saving. Personal appearance and sound choices stay yours.
+
+Ghost mode hides your normal form and costumes from other players. Devcommands keeps your position off the map, including Groups and Guilds sharing.
 
 **Make an NPC talk**
 
@@ -44,23 +60,33 @@ New warps are public. For an older private destination, enable **Available to ev
 
 When the server blocks restricted items, store metals, Dragon Eggs and other blocked items before travelling. Backpack contents count too. Normal portals keep their own rules.
 
+Tamed companions following you can come along through WeaverEditor travel. Server admins choose whether this is allowed.
+
 **Open a player shop**
 
 Add a **Vendor Deed** to a kit and choose its NPC appearance. Players use it to place a shop, deposit stock and set a price. **My Vendors** holds their stock and earnings. Admins can remove shops; owners can still collect what was left inside.
 
 **Trade and find your way home**
 
-Use **/trade** to invite a nearby player. Both players confirm the trade. **/clan**, **/home** and **/checkpoint** open their menus. Set a home with **/sethome Name** inside an active ward owned by your character.
+Use **/trade** to invite a nearby player. Both players confirm the trade. **/clan**, **/home** and **/checkpoint** open their menus. Set a home with **/sethome Name** inside your active ward. With Guilds and ProtectiveWards, a ward bound to your guild also counts.
 
 **Decorate and make scenes**
 
-Open **World → Props** for lights, pictures and notes. **World → Scenes** has camera shots, music and the shared media library. Use **Browse / Import…** to add a picture or song, then save its placement or track. Only admins can place world portals and props.
+Open **World → Props** for lights, pictures and notes. **World → Scenes** has camera shots, music and the shared media library. Scene dialogue has a Valheim frame, word colors and typing speed. Use **Browse / Import…** to add a picture or song, then save its placement or track. Only admins can place world portals and props.
 
 **Try a costume**
 
 Admins can open **Costume**, choose a model and press **Wear / update costume**. Creature controls use its movement and available attacks. Seagulls can walk and fly. Wings included.
 
-Costumes protect you from damage and NPC targeting. Your inventory stays intact. Use the local checkbox to hide your own name and health bar. **Remove costume** returns you to normal. Some modded creatures need their own scripts for special abilities.
+Admin costumes protect you from damage and NPC targeting. Your inventory stays intact. Choose whether everyone sees an NPC bar or no bar. Your player name stays hidden. **Remove costume** returns you to normal. Some modded creatures need their own scripts for special abilities.
+
+Save a **Costume reward**, then add **Costume Claim** to a kit and choose that reward. Players use the claim item and wear their unlocked looks under **F8 → Costumes**. Creature rewards can walk, fly and use their available attacks. Choose appearance mode for a look that keeps normal player controls. Neither gives players god mode or invisibility.
+
+Admins can select a player under **Players** to remove their current costume or revoke costume rewards. Known players can have rewards revoked while offline too.
+
+For prop hunt, open **World → Prop hunt → Place ready arena**. Click where you want its zone and scoreboard. Players enter the zone and press **E** at the board to join. Start a round when everyone is ready. Seekers get a **Pro Hunt Sword** and must hit a prop directly. Hidden props whistle every 30 seconds by default. Change the timers, props and winner reward graph in the event settings.
+
+The wooden scoreboard shows the round timer, joined players, wins and finds while you look at it.
 
 Change colours and text size under **Settings → Appearance**. Players have their own Appearance page too.
 

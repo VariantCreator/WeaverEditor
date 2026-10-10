@@ -8,7 +8,7 @@ Build conversations, quests and events in Valheim with WeaverEditor.
 
 1. Install BepInExPack Valheim, then import the WeaverEditor ZIP into your mod manager.
 2. Install the **same WeaverEditor build on the server or host and every client**. Keep `VariantWeaver.dll` and `VariantWeaver.Core.dll` together.
-3. Join a world and press **F8**. Server admins and players with assigned permissions can edit content. Other players get Travel, Kits, Quests, Appearance and My Vendors.
+3. Join a world and press **F8**. Server admins and players with assigned permissions can edit content. Other players get Travel, Kits, Quests, Appearance, My Vendors, Community and Costumes, as allowed by the server.
 
 For manual installation, copy the ZIP's `plugins/VariantWeaver` folder into `BepInEx/plugins`. Everyone also needs the content mods used by your graphs. WeaverEditor reads the items and creatures registered by installed mods; use **Mods → Rescan** if an entry is missing.
 
@@ -64,6 +64,52 @@ Use **Show removed** to review retired vendors. A trade already in progress must
 The host's `BepInEx/config/com.variantmods.weaver.cfg` has a **Player vendors** section. Defaults are enabled, **3 vendors per player**, **100 per world**, **32 listings per vendor**, and a **100,000-item maximum price**. These limits are enforced by the server. Disabling vendors stops new placements and sales while letting owners recover their items.
 
 Vendors, listings, earnings and pending trades are saved in `BepInEx/config/VariantWeaver/vendors-world-<world ID>.json`. Back up that folder with your world. Keep client `BepInEx/config/WeaverEditor/vendor-receipts` files with character backups; they help recover interrupted trades. Install the same build on the server/host and every client.
+
+## Player records and grave recovery
+
+Open **Players → Known players** to search saved names, account IDs and character IDs. Online players show their current status. Offline records show the last time WeaverEditor saw them. Staff can save private notes and open that player's graves or history. Older names remain searchable.
+
+Open **Players → Graves** and choose **Refresh graves** to scan existing native graves, including ones outside loaded areas. Select a grave and check its owner, death time and position. Unknown owners still appear; a matching name does not prove which account owns an old grave.
+
+**World day** shows the in-game day the grave was created. **Contents not loaded** means its inventory is outside the loaded area; it may still contain items.
+
+Choose your current position, enter coordinates or select a saved recovery area. Review the confirmation before moving. WeaverEditor moves the original grave and keeps its items and owner. It waits for the grave's network owner before moving a loaded grave, and refuses graves marked as in use or with an unfinished inventory transfer. Close its inventory, refresh and retry if it is busy.
+
+**Undo move** returns the same grave to its previous location if it still exists and its contents have not changed. An empty or looted grave cannot be recreated. A recovery message and new map pin reach the owner when they are online, or when that character next joins. Existing death pins are kept.
+
+Server admins have grave recovery access. To delegate it, grant **players.graves** under **Roles**. The default Moderator role does not include it. Player records require **players.view**; staff notes require **players.moderate**. Regular players cannot view these records or move graves.
+
+Open **History** to filter by admin, target player, action, text or date. Results show newest first. Older entries may have only a name in their details; those are marked separately from entries that record the target's account.
+
+Back up the Valheim world and `BepInEx/config/VariantWeaver` together. Graves live in the world save; recovery points, notices and move history live in WeaverEditor's world file.
+
+Grave scans run when requested and show up to 2,000 graves. The menu pages the results so a long list stays manageable. Recent recovery history shows the latest 100 moves.
+
+Close the grave before moving it. You can retry if the list still says it is in use; the server checks its current state. Graves in expanded worlds use the installed world radius. For old graves missing their original spawn anchor, remote players must disconnect before Move or Undo. The menu explains when this is required.
+
+### Spectate an online player
+
+Open **Players → Online**, select a player and choose **Spectate**. Your camera follows their view area while your own player stays where you left them. Move the mouse to look around and use the wheel to change camera distance. Press **Esc** to return, or hold **Alt** and click **Stop**.
+
+Server admins have access. You can delegate it with **players.spectate** under **Roles**. Spectating ends when the player disconnects, changes character or your permission is removed. Return to normal play before using another free camera or a creature costume with movement controls.
+
+### Choose what players see
+
+Open **Settings → Player menu visibility** as a server admin. Toggle Travel, Kits, Quests, Appearance, My Vendors, Community or individual Community tabs. The change is saved on the server and reaches connected clients. Admins still see all pages.
+
+These settings hide F8 pages only. Existing data, feature settings and chat commands remain available. You can also edit **Player menu visibility** in the server's `com.variantmods.weaver.cfg`; saved config changes reload while it is running.
+
+### Admin debug shortcuts
+
+Enable **Admin debug bypass** under **F1 → Server rules** or **F8 → Settings → Server rules**. It starts on. When a server admin has **Debug mode** on, action cooldowns are skipped and **Bring** or **Teleport to player** works without asking that player to approve.
+
+Turn the setting or Debug mode off to use the normal cooldowns and approval prompts again. One-time rewards, inventory travel restrictions, server limits and unfinished transfers still apply. Regular players cannot use the bypass.
+
+### Ghost mode and map privacy
+
+Ghost mode hides your normal appearance, creature costumes, attached effects and name or health bars from other players. Your own view stays usable. Enabling Devcommands also hides your map position, even if your public position was previously enabled. Turning it off keeps your original map preference.
+
+Groups and Guilds position sharing follow the same privacy rules. Server Devcommands remains optional. Use matching WeaverEditor builds on the server and clients for shared visibility.
 
 ## Themes, player journal and movable quest tracker
 
@@ -136,21 +182,40 @@ Edit the server or host's `BepInEx/config/com.variantmods.weaver.cfg`, under the
 [Server rules]
 Block travel while encumbered = true
 Block travel with non-teleportable items = true
+Extra blocked travel items =
+Allowed travel items =
 ```
 
-Both settings default to **false**, keeping existing travel behavior until enabled. Each can be turned on independently. Run the new build once to add the settings, stop the server or host, edit the file and restart it.
+Restricted items are blocked by default. The weight rule starts off. Server admins can change either setting through **F1**, or edit the server config. Saved changes reload and sync to players.
 
 The rules cover **warps, /return, teleport to player, Bring player here and graph/NPC teleports**, including admins. The player actually being moved is checked, not a stationary request sender or destination player. Local client config cannot turn off the host's rules.
 
-Weight is checked against the current carry limit. The item setting checks the no-teleport flag on carried items, including modded items, and special never-teleportable quest cargo. It is not a fixed ore/ingot list. A mod that changes an item's flag to teleportable changes what this setting sees. This separate WeaverEditor rule still applies when the world allows ore through normal portals.
+Weight is checked against the current carry limit. The item rule checks carried items and supported backpack contents. Vanilla metals, Black Metal Scrap and dragon eggs stay blocked by default even if another mod changes their teleport flags. Modded items use their own no-teleport flags. The WeaverEditor rule still applies when the world allows ore through normal portals.
+
+### Ban or allow an item while the server is running
+
+Open **F1 → Server rules**, or **F8 → Settings → Server rules → Travel item overrides**. Keep **Block travel with non-teleportable items** enabled.
+
+* **Extra blocked travel items:** add an item's prefab ID to ban it from WeaverEditor travel. For example, `Wood` blocks wood even though normal portals allow it.
+* **Allowed travel items:** add a prefab ID to allow a normally restricted item. For example, `BlackMetalScrap` allows Black Metal Scrap. Remove it to restore the normal restriction.
+
+Separate IDs with commas, semicolons or new lines. Names are case insensitive and must match the whole prefab ID. A blocked entry wins if the same item is in both lists. To unban an ordinary item, remove it from the blocked list. To unban a normally restricted item, also add it to the allowed list.
+
+Wait for **Server settings saved**. The lists sync to connected players without a restart. Editing those entries in the server config also reloads them while it runs. Changes are saved for the next restart. Other travel checks and other mods' own restrictions still apply; these lists do not change ordinary portals or item data.
 
 The travelling player's inventory is checked again immediately before travel, including after another player accepts a pending request. Blocked travel explains why and keeps the previous return point. A rejected warp refunds its warp cooldown; the short anti-spam/retry timers still apply. Store restricted items or reduce weight, then try again. Normal portals and other mods' teleport commands are unchanged.
 
-Install **1.2.8 on the server/host and every client**. Older client builds do not implement these checks. Custom storage supplied by another mod must expose its contents through the player's inventory to be inspected.
+Install the **same current build on the server/host and every client**. Custom storage supplied by another mod must expose its contents through the player's inventory to be inspected.
 
-The admin **Settings → Server rules** panel shows whether each restriction is enabled. Change the settings in the host's config, not in personal Appearance options.
+The admin **Settings → Server rules** panel shows whether each restriction is enabled and lets server admins edit the item lists. These are server rules, not personal Appearance options.
 
 ## Trader menus and player travel
+
+### Trade with a nearby player
+
+Open **Community → Trade**, choose a nearby player and send an invitation. Once they accept, add inventory items or wallet funds. The two panels show **You give** and **You receive**, including quantities, quality and condition.
+
+Choose **Review and confirm trade** and check both offers. Both players must confirm before the exchange finishes. Changing an offer clears the confirmations so nobody agrees to an old price. Use **Cancel trade** to stop; returned items remain available in the trade menu if your inventory is full.
 
 ### Item-icon traders
 
@@ -196,6 +261,16 @@ Menu travel, `/warp <name>` and placed warp portals use the same server-checked 
 
 These rules apply to WeaverEditor travel, including homes, checkpoints and graph teleports. Normal Valheim portals keep their own rules. Existing server settings are kept when updating. **Personal travel → Require owned ward for homes** controls the owned-ward rule and starts enabled.
 
+### Bring tame companions
+
+Tamed creatures following you can travel with you through WeaverEditor warps. Your ridden mount can come too. Standing livestock, wild creatures and animals following someone else stay where they are.
+
+Under **Server rules**, **Travel with tame companions** starts enabled. **Companion travel range** starts at 10 metres and **Companion travel limit** starts at eight. Admins can change these while the server is running; the server shares the changes with players.
+
+Companions move only after you arrive. They need a safe landing nearby. A companion carrying restricted items, or cargo the mod cannot check, stays behind. Its items stay with it. Normal portals keep their own rules, including any portal mods you use.
+
+Custom cargo mods may need an integration before their storage can be checked.
+
 ### Teleport to an online player
 
 Open **F8 → Players**, select an online player, and choose **Teleport to player**. The other player gets a themed **Accept / Deny** popup with your name. **Bring player here** instead asks the selected player to let WeaverEditor move them to you. Neither action moves anyone until they accept.
@@ -219,7 +294,7 @@ On approval, the server checks the original player sessions, the sender's curren
 
 Only a successful approved trip creates or replaces the travelling player's WeaverEditor return point. Denied and expired requests do not alter `/return`. This consent prompt applies to `/tp`, **Teleport to player** and **Bring player here**. Normal portals, named WeaverEditor warp destinations and quest-graph travel do not show this consent prompt. Enabled travel restrictions still apply to all WeaverEditor teleports.
 
-Install **1.3.2** on the **server/host and every client**. Earlier builds without teleport approval do not implement this handshake: an old server can still have immediate-teleport behavior, while an old recipient client cannot display the request and it will expire.
+Install the same build on the **server or host and every client**. Older clients cannot use the current travel and costume features.
 
 ## Admin Costume
 
@@ -235,9 +310,9 @@ Attacks use the creature's normal cooldown. The controls hint shows when it is r
 
 Seagulls have bird controls. **WASD** walks or flies, **Shift** moves faster, **B** takes off or lands, **Space** rises and **Crouch** descends. Their native wing animation plays in flight. They have no native attack.
 
-All costume modes protect you from damage and NPC targeting. Controlled bodies are temporary and drop no loot. Your inventory stays intact, and removing the costume restores normal controls and your previous admin settings. Random creature calls are muted. Use **Hide my costume's name and health bar on my screen** to hide your own bar; other players' views stay unchanged. This setting is also under **Costume** in the config.
+Admin costumes protect you from damage and NPC targeting. Controlled bodies are temporary and drop no loot. Your inventory stays intact, and removing the costume restores normal controls and your previous admin settings. Random creature calls are muted. The Costume page lets you show an NPC name and health bar or hide both for everyone. Your player name does not appear while dressed. Ghost mode still hides the entire costume.
 
-WeaverEditor travel is unavailable while controlling a creature. Special attacks that depend on a mod's AI scripts may need a separate integration.
+WeaverEditor travel keeps your creature costume and resumes its controls when you arrive. Special attacks that depend on a mod's AI scripts may need a separate integration.
 
 Objects and appearance mode keep your normal movement and combat. **Facing degrees**, **Offset from your feet** and the optional idle/movement animation apply to appearance mode. Wearing a chest does not create storage.
 
@@ -247,9 +322,45 @@ Only standalone visible meshes are supported. Effect-only, script-generated play
 
 ### Updating
 
-Install 1.3.2 on the server or host and every client. Keep **VariantWeaver.dll** and **VariantWeaver.Core.dll** together; remove old duplicate copies rather than leaving two versions installed. Back up and keep `BepInEx/config/VariantWeaver` and your existing WeaverEditor config. This package does not replace saved quests, NPCs or world configuration.
+Install 1.3.6 on the server or host and every client. Keep **VariantWeaver.dll** and **VariantWeaver.Core.dll** together; remove old duplicate copies rather than leaving two versions installed. Back up and keep `BepInEx/config/VariantWeaver` and your existing WeaverEditor config. This package does not replace saved quests, NPCs or world configuration.
+
+## Player costume rewards
+
+1. As an admin, open **F8 → Costume**, choose a look, then save it as a **Costume reward**. Set its name, size, fit and bar visibility.
+2. Open **Community → Kits**, add **Costume Claim**, choose the saved reward and save the kit. Each claim entry gives one claim item; its chance works like other kit entries.
+3. Give the kit normally or through a **Give Kit** graph action. The player uses the issued claim from their inventory to unlock the look.
+4. Players open **F8 → Costumes** to wear or remove their earned looks whenever they want.
+
+**Grant Costume** unlocks a saved reward directly in a graph. **Has Costume** checks whether that player has it. Both use the selected reward and True/False connections.
+
+Creature rewards can use the same movement and available attacks as admin costumes, including flight for flying creatures. Players keep their normal health and take damage. They do not gain god mode, invisibility or admin permissions. Choose appearance mode in the reward settings to keep normal player movement and weapons instead. Objects use appearance mode; a chest costume is still a player, not free storage. Claims are personal and server-issued; copying an item or changing its saved fields cannot grant another reward.
+
+Reward definitions, unlocks and issued claims are saved on the server. The worn appearance ends on logout; players can wear it again after joining. Missing content stays saved and can be used again once its mod returns. All viewers need the same build and the content used by the reward.
+
+Admins can select someone under **Players → Online** or **Known players**, then open **Player costumes**. Remove their current form, revoke a selected reward or revoke all costume rewards. Revoking also cancels their old claim items. Known players can have access revoked while offline. Give a fresh kit claim or graph reward if you want to grant it again.
+
+## Prop hunt
+
+1. Open **World → Prop hunt** and choose **Place ready arena**. Aim at the ground, rotate with **Q / E**, then click to save its zone and scoreboard together.
+2. The starter arena is 40 metres across with chest, chair, workbench and bench props. Choose its name, props, seeker count and player limit. You can also use **New prop hunt** with a zone you already made.
+3. The default is 30 seconds to hide and three minutes to hunt. Change the timers and whistle interval, then save the event. **Move whole arena** moves its zone and scoreboard together; **Place scoreboard** moves only the board. Resize its zone under **Zones**.
+4. Players enter the zone and press **E** at the scoreboard to join. An admin starts the round once at least one seeker and one hider have joined.
+
+The server assigns roles. Seekers wait behind a dark screen with a countdown and explanation during hide time. Hiders get a random approved prop and can choose another from the scoreboard or **Costumes**. These are ordinary player costumes, with normal damage and controls.
+
+Seekers receive a **Pro Hunt Sword**. Make room for one item before joining. Swing it and hit the prop directly; walls block tags. It does no damage and disappears after the round. Other weapons and **E** cannot tag props.
+
+Hidden props whistle every 30 seconds. Set **Whistle interval** to another value, **0** for silence or **-1** to use the server default. Under **F1 → Server rules**, admins can change that default and the maximum round time, up to 20 minutes including hide time. Game sound effects volume controls the whistle.
+
+Found players wait for the next round. The seekers win by finding everyone; unfound hiders win when time runs out. Death forfeits your place. Leaving the zone or disconnecting has a five-second grace period. Winners must be alive, connected and inside the zone when the round ends.
+
+The wooden scoreboard shows the event name, round state, timer and joined players without opening its menu. Its leaderboard has separate columns for wins and finds. Choose an optional published **Winner reward graph** to run it for each winner once per round. Use **Give Kit** or **Grant Costume** in that graph for rewards. **Join Prop Hunt**, **Leave Prop Hunt**, **Start Prop Hunt** and **Stop Prop Hunt** actions can control the event from a graph.
+
+**Stop / new lobby** ends a round and clears its entrants. Saved rules, board placement and scores survive restarts. A running round ends on restart and does not restart itself. Only admins can create, place, edit or delete these events and scoreboards.
 
 ## Menu and editor
+
+The sidebar has icons beside each page. Toggles use a small checkbox next to their description. Button borders start on; change them under **Appearance**. Number fields update as you type.
 
 NPCs, zones, chests and spawners have a searchable browser with enabled and linked status. Select an object to open its settings; expand **Browse** to choose another. Your unsaved object edits stay available while switching within the session.
 
@@ -284,7 +395,7 @@ The config is created at `BepInEx/config/com.variantmods.weaver.cfg` after Weave
 | --- | --- |
 | Menu appearance | Text size, accent, collapsed sections, browser rows, previews and details |
 | Editor preferences | Equal node sizes, dimensions, selection tools, minimap, inspector, local recovery and optional server autosave |
-| Server rules | Encumbrance and non-teleportable-item travel restrictions, public travel/kits, NPC conversations, previews, inspection, admin powers, debug/devcommands, draft autosave and history cleanup |
+| Server rules | Travel restrictions, public travel/kits, conversations, previews, inspection, admin powers, debug shortcuts, draft autosave and history cleanup |
 | Storage | World content limit, saved revision limit and revisions retained per graph after cleanup |
 | Server performance | Active creatures and spawns per second |
 | Community | Clans, member limits and automatic ranks |
@@ -298,7 +409,7 @@ The config is created at `BepInEx/config/com.variantmods.weaver.cfg` after Weave
 | Action messages | Server text for combat, cooldown, permission and other refused actions |
 | Scenes | Your camera choice, shared server audio, separate Internet audio opt-in and audio volume |
 
-Change server settings in the host's config. Changes to shared image limits, audio limits and action messages are sent to connected players within a few seconds; a restart is not required. Clients cannot override server rules. WeaverEditor's debug/devcommands setting controls its own buttons; other mods keep their own controls. Normal portals are unchanged.
+Server admins can change shared settings through **F1** while connected, or edit the server's config. Wait for the saved confirmation. Changes reach connected players; a restart is not required. Other players cannot override server rules. Personal appearance and audio choices stay local. WeaverEditor's debug/devcommands setting controls its own buttons; other mods keep their own controls. Normal portals are unchanged.
 
 ### Image, audio and refusal-message limits
 
@@ -452,7 +563,7 @@ Only server admins can place, edit or remove these portals and props. Players ca
 Players and admins can open the Community hub from **F8**.
 
 - **Clans:** create a clan, invite players, accept invitations and manage membership. Leaders can transfer leadership or disband. Admins can manage all WeaverEditor clans.
-- **Homes:** use **/sethome Name**, **/home Name** and **/delhome Name**. Saving or moving a home requires an active ward owned by your character. Being permitted in someone else's ward does not qualify. Homes are private and obey WeaverEditor travel restrictions.
+* **Homes:** use **/sethome Name**, **/home Name** and **/delhome Name**. Saving or moving a home requires your active ward. With Guilds and ProtectiveWards, members can also use an active ward bound to their guild with guild access enabled. Being ordinarily permitted in someone else's ward does not qualify. Homes are private and obey WeaverEditor travel restrictions.
 - **Checkpoints:** a **Set Checkpoint** action saves the NPC/zone location or a chosen travel destination. **Has Checkpoint** checks it and **Clear Checkpoint** removes it. Players choose whether to use it after death.
 - **Ranks:** admins create permission-free ranks and set promotion rules for playtime or completed quests. **Grant Rank** and **Remove Rank** actions can change them in a graph. These actions cannot grant admin access.
 
@@ -502,7 +613,9 @@ Existing shots retain legacy travel/final-hold timing. Enable **Use per-camera t
 
 Click a timeline card to edit it. Drag it onto another card to reorder, or use **Earlier / Later**. Music/subtitle cue timestamps stay at their absolute time when cards move; check them after reordering or shortening the shot. Invalid cues beyond the new end must be moved or removed before saving.
 
-Add a **Music cue**, **Dialogue cue** or **Stop audio cue** at a chosen number of seconds. Dialogue cues are cinematic text captions, not interactive NPC conversations; each can display for 1–30 seconds with up to 500 characters. A shot supports 64 cues. Timeline Stop audio affects that scene’s cue track. **Stop this scene’s timeline audio when it finishes** defaults on. Turning it off lets that track continue under its own duration/loop rules, but leaving its parent zone still clears it. Esc cancels the scene and its cue music.
+Add a **Music cue**, **Dialogue cue** or **Stop audio cue** at a chosen number of seconds. Dialogue cues are cinematic captions, each visible for 1–30 seconds with up to 500 characters. They use a Valheim frame and lettering. Choose a base text color, or select words and use **Color selected words**. You can also write `<color=#E2B960>gold words</color>` directly. **Text speed %** works like a Dialogue Node: 60 is the usual speed and 0 shows the whole message. Give longer messages enough visible time to finish typing.
+
+A shot supports 64 cues. Timeline Stop audio affects that scene’s cue track. **Stop this scene’s timeline audio when it finishes** defaults on. Turning it off lets that track continue under its own duration/loop rules, but leaving its parent zone still clears it. Esc cancels the scene and its cue music.
 
 ### Shared image and music library
 
@@ -561,6 +674,8 @@ New exports include link names. Imports match unique names and ask you to resolv
 ## Server settings and backups
 
 When updating, replace the mod files on the server and every client, then restart them. **Keep and back up `BepInEx/config/VariantWeaver` alongside the Valheim world.** It holds graphs, NPC and zone links, kits, travel points and player progress.
+
+Uploaded pictures and music are stored on the host/server in the matching `media-<world ID>` and `images-<world ID>` folders under `VariantWeaver`. Keep those folders with the world JSON when backing up or moving the server. Clients receive shared files from the server. Direct Internet links still depend on their original host.
 
 The server allows **8 MB of saved WeaverEditor content per world** by default. This includes published graphs, drafts, earlier revisions and other saved state, rather than a separate allowance for each graph. Larger network transfers are compressed automatically.
 

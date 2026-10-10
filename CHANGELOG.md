@@ -1,3 +1,28 @@
+# 1.3.6
+
+A collection of bug fixes and improvements
+
+# 1.3.5
+
+A collection of bug fixes and improvements
+
+# 1.3.4
+
+A collection of bug fixes and improvements
+
+# 1.3.3
+
+* Recover existing graves, including graves owned by offline players.
+* Save recovery areas and undo a move while the grave contents are unchanged.
+* Search known players and keep staff notes.
+* Filter history by admin, player, action and date.
+* Spectate online players as an admin. Esc brings you back.
+* Choose which F8 pages players see without turning their features off.
+* Ghost mode hides your normal form and costumes. Devcommands keeps you off the map.
+* Fixed placement menu errors and cleanup when leaving a world.
+
+Keep your configs. Update both DLLs on the server or host and every client.
+
 # 1.3.2
 
 * Kit items now have their own drop chance.

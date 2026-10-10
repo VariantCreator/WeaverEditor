@@ -1,6 +1,6 @@
 # Earlier download: 1.2.1
 
-[Download the compiled package](https://cdn.hexium.gg/upload/1630/1.2.1.zip) · [Hexium listing](https://valheim.hexium.gg/mods/VariantMods/VariantWeaver) · [Installation guide](../../GUIDE.md)
+[Download the compiled package](https://cdn.hexium.gg/upload/1630/1.2.1.zip) · [Hexium listing](https://valheim.hexium.gg/mods/VariantMods/VariantWeaver) · [Installation guide](https://github.com/VariantCreator/WeaverEditor/blob/main/GUIDE.md)
 
 Install the same build on the server or host and every client. Keep both DLLs together and preserve your mod configuration and world-data folder.
 
