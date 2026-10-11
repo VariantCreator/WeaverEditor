@@ -378,6 +378,8 @@ The server assigns roles. Seekers wait behind a dark screen with a countdown and
 
 Choose **Sword**, **Crossbow** or **Both** under **Seeker weapons**. Seekers receive a **Pro Hunt Sword** and/or **Pro Hunt Crossbow**; make room in their inventory before joining. The crossbow needs no ammunition and has a three-second reload by default. Both require a direct hit, walls block tags, and misses do no damage to scenery. The weapons disappear after the round. Other weapons and **E** cannot tag props.
 
+Admins can also spawn `VW_PropHuntSword` and `VW_PropHuntCrossbow` to try them outside a round. They stay equipped and use the server's crossbow reload and range settings. Test weapons do no damage and cannot earn event points. Regular players still need the weapons issued by their round.
+
 New events use live server rules. Under **F1 → Prop hunt**, admins can choose **Hide minimap**, **Hide world map**, **No stamina cost**, **Keep hostile creatures out** and **Protect structures and scenery**, along with weapon and round defaults. Use **Enforce server defaults** to apply those choices to older events too. Map and stamina changes end with the round.
 
 Hidden props whistle every 30 seconds. Set **Whistle interval** to another value, **0** for silence or **-1** to use the server default. Under **F1 → Server rules**, admins can change that default and the maximum round time, up to 20 minutes including hide time. Game sound effects volume controls the whistle.
