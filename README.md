@@ -117,6 +117,6 @@ Choose **Guilds** as the clan provider if you use it. **Groups** can show your p
 
 Back up the world and the whole `BepInEx/config/VariantWeaver` folder.
 
-### 📖 [Full guide](https://github.com/VariantCreator/WeaverEditor/blob/main/GUIDE.md) · 📝 [Changelog](https://github.com/VariantCreator/WeaverEditor/blob/main/CHANGELOG.md) · 📥 [Downloads](https://github.com/VariantCreator/WeaverEditor/releases)
+### 📖 [Full guide](https://github.com/VariantCreator/WeaverEditor/blob/main/GUIDE.md) · 📄 [Quick guide PDF](https://github.com/VariantCreator/WeaverEditor/blob/main/QUICK-START.pdf) · 📝 [Changelog](https://github.com/VariantCreator/WeaverEditor/blob/main/CHANGELOG.md) · 📥 [Downloads](https://github.com/VariantCreator/WeaverEditor/releases)
 
 Inspired by [Pippi](https://steamcommunity.com/sharedfiles/filedetails/?id=3725018456) for Conan Exiles, created by **Joshtech (CoOkIeMoNsTeR)**.
