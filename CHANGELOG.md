@@ -1,3 +1,8 @@
+# 1.3.7
+
+* Fixes & improvements to the weaver editor
+* Performance tweaks
+
 # 1.3.6
 
 A collection of bug fixes and improvements

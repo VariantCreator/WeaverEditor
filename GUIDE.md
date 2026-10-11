@@ -158,11 +158,11 @@ While playing normally, the tracker does not intercept mouse clicks or unlock yo
 
 Regular players use **F8 → Appearance → Quest tracker**. Admins use **F8 → Settings → Quest tracker**. Available controls:
 
-- Show/hide the tracker, enable Esc dragging and enable quest destination map pins.
-- Scale from **0.65× to 1.60×** and width from **280 to 520 pixels** before scaling.
-- Background opacity from **35% to 100%** and compact quest rows.
-- Maximum **1–6** tracked quests. Extra tracked quests remain in the journal.
-- **Move tracker** opens the Esc menu for placement. **Reset position** restores the default placement.
+* Show/hide the tracker, enable Esc dragging and enable quest destination map pins.
+* Scale from **0.65× to 1.60×** and width from **280 to 520 pixels** before scaling.
+* Background opacity from **35% to 100%** and compact quest rows.
+* Maximum **1–6** tracked quests. Extra tracked quests remain in the journal.
+* **Move tracker** opens the Esc menu for placement. **Reset position** restores the default placement.
 
 The position is saved as a proportion of available screen space. Resolution, scale and width changes keep the complete panel on screen. Large trackers are automatically reduced to fit smaller screens. The default maximum is three quests.
 
@@ -322,7 +322,7 @@ Only standalone visible meshes are supported. Effect-only, script-generated play
 
 ### Updating
 
-Install 1.3.6 on the server or host and every client. Keep **VariantWeaver.dll** and **VariantWeaver.Core.dll** together; remove old duplicate copies rather than leaving two versions installed. Back up and keep `BepInEx/config/VariantWeaver` and your existing WeaverEditor config. This package does not replace saved quests, NPCs or world configuration.
+Install the same current build on the server or host and every client. Keep **VariantWeaver.dll** and **VariantWeaver.Core.dll** together; remove old duplicate copies rather than leaving two versions installed. Back up and keep `BepInEx/config/VariantWeaver` and your existing WeaverEditor config. This package does not replace saved quests, NPCs or world configuration.
 
 ## Player costume rewards
 
@@ -337,26 +337,56 @@ Creature rewards can use the same movement and available attacks as admin costum
 
 Reward definitions, unlocks and issued claims are saved on the server. The worn appearance ends on logout; players can wear it again after joining. Missing content stays saved and can be used again once its mod returns. All viewers need the same build and the content used by the reward.
 
+Player costume access lasts **12 real hours** by default, including offline time. Each reward can use the server duration, a custom **Access hours** value or **Unlimited access to this reward**. The timer starts when the player claims it or receives **Grant Costume**. Removing the costume does not pause the timer. Set **Costume rewards → Default access hours** to `0` for an unlimited server default.
+
 Admins can select someone under **Players → Online** or **Known players**, then open **Player costumes**. Remove their current form, revoke a selected reward or revoke all costume rewards. Revoking also cancels their old claim items. Known players can have access revoked while offline. Give a fresh kit claim or graph reward if you want to grant it again.
+
+The same controls let admins change when an existing player's reward expires or make it unlimited. Normal player costumes still use normal health and stamina. Prop Hunt can apply its own round rules.
+
+## Admin building and other tools
+
+**Admin build bypass** is under **Server rules** and starts enabled. It lets a verified server admin build, remove and repair through normal ward access checks while Weaver admin duty, debug mode or devcommands is active. World editing and admin powers are still required.
+
+**Admin mystical-force bypass** is a separate server setting and starts off. Turn it on if admins should also build in vanilla protected locations, such as the starting stones. Leaving it off keeps those restrictions and your other building mods' settings. Neither setting gives regular players admin rights or changes travel and reward rules.
+
+Infinity Hammer, World Edit Commands, Upgrade World and Server Devcommands stay optional. Weaver does not replace their commands, patch their assemblies, or change their configs. Their own installation, server permission and extra protection requirements still apply. Leaving Weaver admin duty restores only modes changed through Weaver, and preserves modes which have subsequently changed externally.
+
+For ProtectiveWards, **Ward admin access = AdminsInGodMode** requires God mode. Choose **Admins** in that mod's server config when admins should have ward access without God mode. Do not disable ordinary ward protection. Infinity Hammer's **Set invulnerability** and **No remove** options can deliberately make pieces protected; these are separate from a spawn no-build restriction.
+
+**Ghost** and **Fly** are separate switches under admin powers. Ghost hides you while you walk. Fly lets you fly while remaining visible. Use both for hidden flight. Devcommands also keeps your position off other players' maps.
+
+### Player builds
+
+Open **Players → Builds** and choose a recorded player. Set a radius, click the map to choose its centre, then use **Refresh build preview**. Radius `0` scans the whole saved world, including unloaded areas. **Include every player's buildings in this area** changes the scan to all recorded creators in the selected area.
+
+The map shows building clusters and optional zone outlines. Use **Fit buildings** to see the results together, or zoom in to choose a smaller area. Changing the player or area requires a fresh preview before removal.
+
+The player list shows **Last login** and **Last active** in real UTC time. Choose the 30, 60 or 90 day filter to find inactive players. Dates remain saved after three months. Older records keep their known activity date; an unknown login stays unknown until that player joins again.
+
+**Remove previewed pieces** shows a confirmation and saves a restore point before removing anything. Busy containers and pieces changed since the preview stay in place. Pieces without a recorded creator are excluded. Check the area carefully: removing a supporting piece can affect nearby builds.
+
+Use **Restore** beside a saved point to bring its removed pieces back, with their saved inventories and sign text. Existing pieces and newer edits stay in place. Keep `BepInEx/config/VariantWeaver/build-recovery-<world ID>` with your world backups.
 
 ## Prop hunt
 
 1. Open **World → Prop hunt** and choose **Place ready arena**. Aim at the ground, rotate with **Q / E**, then click to save its zone and scoreboard together.
 2. The starter arena is 40 metres across with chest, chair, workbench and bench props. Choose its name, props, seeker count and player limit. You can also use **New prop hunt** with a zone you already made.
 3. The default is 30 seconds to hide and three minutes to hunt. Change the timers and whistle interval, then save the event. **Move whole arena** moves its zone and scoreboard together; **Place scoreboard** moves only the board. Resize its zone under **Zones**.
-4. Players enter the zone and press **E** at the scoreboard to join. An admin starts the round once at least one seeker and one hider have joined.
+4. Players enter the zone and press **E** at the scoreboard to join. Any joined player can choose **Start round** once there are enough players for the configured seekers plus at least one hider. Everyone must be alive and inside the arena.
 
-The server assigns roles. Seekers wait behind a dark screen with a countdown and explanation during hide time. Hiders get a random approved prop and can choose another from the scoreboard or **Costumes**. These are ordinary player costumes, with normal damage and controls.
+The server assigns roles. Seekers wait behind a dark screen with a countdown and explanation during hide time. Hiders choose their first look from the approved props. After that, press **R** for a random change from the event's list. The default cooldown is 30 seconds. Admins can change the cooldown and movement speed. Normal costume rewards keep their usual damage and stamina rules.
 
-Seekers receive a **Pro Hunt Sword**. Make room for one item before joining. Swing it and hit the prop directly; walls block tags. It does no damage and disappears after the round. Other weapons and **E** cannot tag props.
+Choose **Sword**, **Crossbow** or **Both** under **Seeker weapons**. Seekers receive a **Pro Hunt Sword** and/or **Pro Hunt Crossbow**; make room in their inventory before joining. The crossbow needs no ammunition and has a three-second reload by default. Both require a direct hit, walls block tags, and misses do no damage to scenery. The weapons disappear after the round. Other weapons and **E** cannot tag props.
+
+New events use live server rules. Under **F1 → Prop hunt**, admins can choose **Hide minimap**, **Hide world map**, **No stamina cost**, **Keep hostile creatures out** and **Protect structures and scenery**, along with weapon and round defaults. Use **Enforce server defaults** to apply those choices to older events too. Map and stamina changes end with the round.
 
 Hidden props whistle every 30 seconds. Set **Whistle interval** to another value, **0** for silence or **-1** to use the server default. Under **F1 → Server rules**, admins can change that default and the maximum round time, up to 20 minutes including hide time. Game sound effects volume controls the whistle.
 
 Found players wait for the next round. The seekers win by finding everyone; unfound hiders win when time runs out. Death forfeits your place. Leaving the zone or disconnecting has a five-second grace period. Winners must be alive, connected and inside the zone when the round ends.
 
-The wooden scoreboard shows the event name, round state, timer and joined players without opening its menu. Its leaderboard has separate columns for wins and finds. Choose an optional published **Winner reward graph** to run it for each winner once per round. Use **Give Kit** or **Grant Costume** in that graph for rewards. **Join Prop Hunt**, **Leave Prop Hunt**, **Start Prop Hunt** and **Stop Prop Hunt** actions can control the event from a graph.
+The wooden scoreboard shows the event name, round state, timer and joined players without opening its menu. Text is visible from the front; the board remains usable from behind. Its leaderboard has separate columns for wins and finds. Choose an optional published **Winner reward graph** to run it for each winner once per round. Use **Give Kit** or **Grant Costume** in that graph for rewards. **Join Prop Hunt**, **Leave Prop Hunt**, **Start Prop Hunt** and **Stop Prop Hunt** actions can control the event from a graph.
 
-**Stop / new lobby** ends a round and clears its entrants. Saved rules, board placement and scores survive restarts. A running round ends on restart and does not restart itself. Only admins can create, place, edit or delete these events and scoreboards.
+After a finished or cancelled round, any player can choose **Join next round** to open a fresh lobby. Players join again rather than being enrolled automatically. Disconnected players and players who leave the waiting arena are removed after a short grace period. **Stop / new lobby** remains admin-only and clears the entrants. Saved rules, board placement and scores survive restarts. A running round ends on restart and does not restart itself. Only admins can create, place, edit or delete events and scoreboards.
 
 ## Menu and editor
 
@@ -372,14 +402,14 @@ Save stays at the bottom of the panel. Kits allow 60 rows and 1,000 items per ro
 
 WeaverEditor keeps the current graph name and save state visible. Use the arrows to go back and forward, or **Graphs** to search All, Recent, Linked or Draft graphs. Names such as `Tavern / Greeter` group related graphs.
 
-- All nodes use the same size by default. Longer settings scroll inside the node.
-- Shift-click or drag empty space to select nodes. Drag a title to move the selection.
-- **Select branch** selects the connected path. Copy/paste keeps connections between copied nodes; reconnect any outside links.
-- Align a selection into a row or column. Use the minimap to move around large graphs.
-- **Fit graph** shows the whole graph. At a distance, nodes become coloured blocks. Select one and click **Focus**, or double-click it, to return to editing size.
-- Click a validation result to find its node. Missing connections appear red.
-- Collapse the inspector for more space. Edit node settings directly inside the cards.
-- **Connections / Used by** opens related graphs and world objects.
+* All nodes use the same size by default. Longer settings scroll inside the node.
+* Shift-click or drag empty space to select nodes. Drag a title to move the selection.
+* **Select branch** selects the connected path. Copy/paste keeps connections between copied nodes; reconnect any outside links.
+* Align a selection into a row or column. Use the minimap to move around large graphs.
+* **Fit graph** shows the whole graph. At a distance, nodes become coloured blocks. Select one and click **Focus**, or double-click it, to return to editing size.
+* Click a validation result to find its node. Missing connections appear red.
+* Collapse the inspector for more space. Edit node settings directly inside the cards.
+* **Connections / Used by** opens related graphs and world objects.
 
 Local draft recovery saves while you edit and does not publish anything. **Recovered drafts** also finds new graphs that were never saved to the server. Compare with the server copy before saving recovered work. Publishing and linking stay manual.
 
@@ -424,6 +454,8 @@ Original server message => Your replacement message
 ```
 
 These settings change the wording only. The server still enforces the same rules.
+
+For more messages, open the server's `BepInEx/config/VariantWeaver/messages.json` and edit a row's **replacement**. Leave it blank to keep the original. Keep `{value1}` and `{value2}` for that message's changing numbers or names; `{reason}` and `{action}` also work. The server reloads a saved file and shares the changes while running. A broken edit keeps the last valid messages. NPC dialogue, scene text, graph text and messages from other mods stay as written.
 
 **History → World storage** shows the space used by published graphs, drafts, revisions and player state. Only the server owner can clean earlier revisions. Cleanup first saves the full world file under `BepInEx/config/VariantWeaver/backups`; current graphs, drafts and links are kept.
 
@@ -479,13 +511,29 @@ Dialogue continues through its output automatically; an Option waits for a playe
 
 Node positions save automatically for saved graphs. Save a new graph as a draft first.
 
+### Reuse blocks and organise large graphs
+
+Open **Setup and links → Reusable block values** to name the values a graph accepts. Use `{param:name}` in text or content fields. A **Call Graph** node supplies those values under **Block arguments**. The advanced inspector also has **Parameter bindings** for numbers and checkboxes.
+
+Create named, coloured **Graph sections** in setup, select some nodes and choose **Assign selection**. **Focus** moves the view there; **Fold / Unfold** tidies the view without changing what runs. A node's **Open linked content** button jumps straight to its kit, NPC, spawner or other saved target.
+
+**Publish** and **Publish & link** first show a review of changed nodes and affected links. Check it, then choose **Publish revision**. Existing player progress stays saved.
+
 ### Try a graph before publishing
 
-- **Debug draft** lets you step through the graph and inspect branch results.
-- **Preview as player** runs without admin roles. Preview controls can simulate inventory, travel and encounter outcomes.
-- **Live test on me** runs the **published revision** with real effects on your character and world.
+* **Debug draft** lets you step through the graph and inspect branch results.
+* **Preview as player** runs without admin roles. Preview controls can simulate inventory, travel and encounter outcomes.
+* **Live test on me** runs the **published revision** with real effects on your character and world.
 
 Draft previews use copied state and simulated actions. Finish by publishing and trying the actual NPC or zone interaction.
+
+Save a **Test scenario** under **Setup and links** to repeat a preview with chosen items, skills, personal keys, quest progress and roles. Scenarios apply before the first node. You can also save the current preview as a scenario. They are local editor settings in `BepInEx/config/WeaverEditor/editor/test-scenarios.json`; keep that editor folder out of shared profiles.
+
+### Give NPC conversations some character
+
+In a Dialogue node's **Presentation** section, choose a text colour, typing speed, NPC portrait, gesture or saved voice clip. Turn on **Use text color tags** for words such as `<color=#FFCC00>gold words</color>`. `{player}` inserts the listener's name and `{npc}` inserts the speaker's name. Space reveals the rest of a typed line.
+
+In an Option node's **Reply details and requirements**, choose **Conversation**, **Quests** or **Trade**. Add item, rank or quest requirements, then show the reply with a locked reason or hide it until available. The server checks requirements again when the player chooses it. A quest key and reward kit add an objective and reward preview beside the replies.
 
 ## Quests and timers
 
@@ -493,15 +541,27 @@ Use **Action → Give Quest** to set a quest key, display name and instructions.
 
 For a timed quest, enter a duration and choose its unit:
 
-- **Expire:** the quest expires when time runs out.
-- **Reset:** clears the quest when the timer ends so it can be offered again.
-- **Zero duration:** no time limit.
+* **Expire:** the quest expires when time runs out.
+* **Reset:** clears the quest when the timer ends so it can be offered again.
+* **Zero duration:** no time limit.
 
 Timers continue while the player is offline. **Has Quest Timer** checks for a running timer; **Quest Time Remaining** compares its remaining seconds. Numeric conditions offer equals, not equals, less than, greater than and inclusive comparisons.
 
 Use **Handoff Quest** to send a player to another saved NPC. Its continuation runs when that player talks to the destination NPC. Keep quest keys consistent across both conversations.
 
 An optional item target and map destination help players follow a quest. Players can track up to three active quests. The displayed item count comes from their inventory; your graph still needs to check the requirement and complete the quest.
+
+### Build a quest with stages
+
+Open **Quest builder** in WeaverEditor or the admin Quests page. Name the quest, give it a unique key, choose its NPC and reward kit, then add **Item**, **Encounter** or **NPC** objectives. Objectives with the same stage number finish together. **Create graph** makes an ordinary draft you can edit, publish and link.
+
+**Advance Quest Stage** checks all required objectives and takes only items marked for turn-in. Missing items leave the whole payment untouched. NPC visits and encounter clears need verified progress. **Claim Quest Reward** gives the selected kit once; if the player's inventory is full, the reward stays available for another try. **Quest Stage** and **Has Quest Objectives** let you branch your own scripts around that progress.
+
+### Make other events
+
+Open **World → Events** to create a lobby and ordered, timed phases. Each phase can run an **Enter graph** and **Exit graph** for its participants. Add **Start**, **Win**, **Loss / forfeit**, **Cancel** and **Cleanup** graphs where needed. Players find available events under **Community → Events**.
+
+Use **Mark Event Winner** to choose winners and **Finish Event** to end with results. The last phase can finish the event too. Cancellation runs its own cleanup and gives no winner rewards. Participant limits, public starts and phase graphs follow the server's **Custom events** settings.
 
 ## Spawners, zones and chests
 
@@ -551,21 +611,21 @@ Open **World → Props** and choose Lights, Images & flags or Notes. Create the 
 
 Only server admins can place, edit or remove these portals and props. Players can use portals and read notes.
 
-- **Lights:** save a light type with RGB or hex colour, brightness and range, then use **Place copies of saved type**. Each click adds a separate light; Esc finishes. Editing a type updates all copies. Select a copy to move or remove it. Shadows are limited to eight placed lights.
-- **Images:** click **Browse / Import image…** or **Choose from media library**, select a PNG/JPG and save the placement. Windows Browse opens your PC’s normal file explorer. Other platforms can paste a full path into **Media library → Local file path** and choose **Import file from path**. The host/server stores shared files once. Limits are up to 16 MiB and 4096 × 4096, with display scale up to 16. Library thumbnails show the saved files; pictures keep their proportions.
-- **Image URLs:** choose **Switch this draft to an approved URL** when necessary, enter a direct image link and save the placement. Approve its host in **World images → Allowed image hosts** on the server. Uploaded files work without an external website.
-- **Flags:** turn on **Tall flag shape** for a portrait display.
-- **Picture facing:** the gold **FRONT** arrow points out from the picture side while placing images or flags. Use **Q/E** to turn them.
-- **Notes:** write plain text, up to 4,000 characters. Players press **E** nearby to read it.
+* **Lights:** save a light type with RGB or hex colour, brightness and range, then use **Place copies of saved type**. Each click adds a separate light; Esc finishes. Editing a type updates all copies. Select a copy to move or remove it. Shadows are limited to eight placed lights.
+* **Images:** click **Browse / Import image…** or **Choose from media library**, select a PNG/JPG and save the placement. Windows Browse opens your PC’s normal file explorer. Other platforms can paste a full path into **Media library → Local file path** and choose **Import file from path**. The host/server stores shared files once. Limits are up to 16 MiB and 4096 × 4096, with display scale up to 16. Library thumbnails show the saved files; pictures keep their proportions.
+* **Image URLs:** choose **Switch this draft to an approved URL** when necessary, enter a direct image link and save the placement. Approve its host in **World images → Allowed image hosts** on the server. Uploaded files work without an external website.
+* **Flags:** turn on **Tall flag shape** for a portrait display.
+* **Picture facing:** the gold **FRONT** arrow points out from the picture side while placing images or flags. Use **Q/E** to turn them.
+* **Notes:** write plain text, up to 4,000 characters. Players press **E** nearby to read it.
 
 ## Community hub
 
 Players and admins can open the Community hub from **F8**.
 
-- **Clans:** create a clan, invite players, accept invitations and manage membership. Leaders can transfer leadership or disband. Admins can manage all WeaverEditor clans.
+* **Clans:** create a clan, invite players, accept invitations and manage membership. Leaders can transfer leadership or disband. Admins can manage all WeaverEditor clans.
 * **Homes:** use **/sethome Name**, **/home Name** and **/delhome Name**. Saving or moving a home requires your active ward. With Guilds and ProtectiveWards, members can also use an active ward bound to their guild with guild access enabled. Being ordinarily permitted in someone else's ward does not qualify. Homes are private and obey WeaverEditor travel restrictions.
-- **Checkpoints:** a **Set Checkpoint** action saves the NPC/zone location or a chosen travel destination. **Has Checkpoint** checks it and **Clear Checkpoint** removes it. Players choose whether to use it after death.
-- **Ranks:** admins create permission-free ranks and set promotion rules for playtime or completed quests. **Grant Rank** and **Remove Rank** actions can change them in a graph. These actions cannot grant admin access.
+* **Checkpoints:** a **Set Checkpoint** action saves the NPC/zone location or a chosen travel destination. **Has Checkpoint** checks it and **Clear Checkpoint** removes it. Players choose whether to use it after death.
+* **Ranks:** admins create permission-free ranks and set promotion rules for playtime or completed quests. **Grant Rank** and **Remove Rank** actions can change them in a graph. These actions cannot grant admin access.
 
 The server controls these features and their limits. Turning a feature off keeps its saved data.
 
@@ -631,6 +691,8 @@ Files live on the host/server in `BepInEx/config/VariantWeaver/media-<world ID>`
 
 Under **Server media**, **Allow admin imports** can disable new imports, and **Storage budget MiB** defaults to 256 (32–2048 supported). There are up to 200 library entries. Replaced/deleted blobs remain on disk for saved-world backups and still count towards this quota; removal of a library entry is not a disk-cleanup action. Do not manually remove files still referenced by the world or backups. On each client, the reusable shared-file cache is under `BepInEx/cache/WeaverEditor/media`, bounded by **Media → Local cache budget MiB** (default 256; 32–1024). In-use streaming files stay pinned until released. This cache is not the authoritative server library.
 
+**Server media** also controls shared upload/download slots and the gap between download chunks. You can change these live. **Media performance** sets each player's decoded audio cache, idle retention and load timeouts; **Media → Local cache budget MiB** still limits the disk cache. Preload music before an event to avoid the first-play wait. Unity handles decoding, so a longer timeout gives a slow file more time rather than making it decode faster. The defaults keep the existing behaviour.
+
 ### Music zones, fades and priorities
 
 Under **Audio tracks**, create a track and choose a library file, Browse/Import one, or switch to a direct Internet URL. Imported music uses the player’s **Shared server audio** setting, on by default. Direct HTTP(S) audio still requires their separate **Internet audio** opt-in, off by default. Both respect the player’s scene volume. Server script permissions and audio size limits still apply.
@@ -638,6 +700,8 @@ Under **Audio tracks**, create a track and choose a library file, Browse/Import 
 Set **Fade in seconds** and **Fade out seconds** (0–30, default 2), playback duration, loop and priority. A track priority and its zone’s **Music priority** are added; higher values take over. Equal-priority renewals remain stable instead of constantly switching. At most one main track and one outgoing fade are audible. Leaving the winning zone allows the lower-priority active zone to resume with a fade; renewing the same loop does not restart it. Scene cue music has precedence over regular zone tracks. These controls affect WeaverEditor music, not vanilla background music or other mods’ audio.
 
 **Stop Audio → Stop scope** defaults to **This zone / graph source**. An outer zone’s exit must not stop a newer inner-zone track. Choose **All scripted music for this player** only for a deliberate global stop. Stop begins a fade without holding the graph until silence. The server also clears departed/disabled/deleted zone owners, including after teleports, and cancels their pending playback. Source-scoped stops from zones should run through that zone’s enter/exit/stay graph bindings so they carry the same source identity.
+
+In **Play Audio**, choose **Continue immediately** to move on when playback starts, or **Wait until finished** to hold the graph until the song ends. A looping track waits for its saved playback duration. Missing audio, a player's audio opt-out or an early stop follows **False**, so connect a helpful fallback. A higher-priority track can prevent playback; it does not count as a successful play.
 
 Nearby zone and timeline music can preload automatically when that audio source is enabled. Up to three candidates are sent ahead of entry, with four streaming clips in the client’s session cache. Use **Preload this audio** to prepare a selected draft without playing. **Clear local audio cache** stops scripted music and clears streaming/temporary URL entries; it does not erase the persistent shared-file library cache. Replacing a file at the same Internet URL needs this clear action or a new URL. Library replacements use content hashes automatically.
 
@@ -670,6 +734,14 @@ These are normal graphs and zone/spawner records. Edit them with the existing to
 Put graph JSON files in `BepInEx/config/WeaverEditor/exports`, then choose **Import** in WeaverEditor. **Export** writes files to the same folder. On first launch after updating, existing exports move here automatically. Files with matching names and different contents are kept under separate filenames.
 
 New exports include link names. Imports match unique names and ask you to resolve missing or ambiguous references. Positions and wires are preserved; **Arrange** tidies the layout. Choose the destination NPC or zone on your own server, review item and spawner references, then **Publish & link**.
+
+### Share a whole quest or area
+
+Open **Content → Content workshop**. Choose a starting graph, optionally include nearby placed content, and **Export package at my position**. The ZIP contains linked graphs, kits, quests, scenes and uploaded media. It keeps player progress, money, ownership and issued claims out.
+
+For an import, browse to that ZIP and choose **Preview file**. Check missing items and name conflicts, choose the new placement origin, then import. Existing content stays in place; the package creates separate copies. Graphs arrive as drafts and placed content arrives disabled. Check the links, publish the graphs and enable the placements when ready. Everyone still needs the content mods used by the package.
+
+**Readiness check** on the same page lists missing links, unavailable items and other things to fix. **Open graph** takes you to a listed graph. Check again after making changes.
 
 ## Server settings and backups
 

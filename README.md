@@ -5,16 +5,17 @@ Create conversations, shops and events for Valheim. Connect nodes to choose what
 
 ## 🧩 What you can do
 
-* **🧙 NPCs and quests:** Make greeters, traders and quest givers with their own outfits.
-* **🔗 Graphs:** Connect dialogue, options, conditions, waits and actions.
+* **🧙 NPCs and quests:** Make greeters, traders and quest givers. Group their replies, show rewards and build quests with several stages.
+* **🔗 Graphs:** Connect dialogue, options, conditions, waits and actions. Reuse blocks and keep large scripts in named sections.
+* **📦 Content workshop:** Share a whole quest or area with its linked content and uploaded media. Check missing links before publishing.
 * **🛒 Player shops:** Give players a Vendor Deed. They stock their shop and choose a payment item, such as Coins or Stone.
 * **🎁 Kits:** Give each item its own chance to appear. Wood for everyone, fancy armour for the lucky ones.
 * **🌀 Travel:** Create destinations and physical portals. Players use **/warp** or press **E** at a portal.
 * **🏮 World tools:** Place lights, pictures, flags and notes. Build camera scenes with music and subtitles.
 * **🤝 Community:** Use clans, trading, homes, checkpoints and optional wallets.
-* **🛠️ Admin tools:** Manage players, recover graves, inspect inventories, run events and wear creature costumes.
+* **🛠️ Admin tools:** Manage players, recover graves, inspect inventories, clean up builds from the map and wear creature costumes.
 * **🎭 Costume rewards:** Give players creature movement and attacks through kits or graphs. They stay visible and take normal damage.
-* **🔍 Prop hunt:** Place a ready arena, join at its scoreboard and hunt the suspicious furniture with a wooden sword.
+* **🔍 Prop hunt:** Place a ready arena, join at its scoreboard and hunt the suspicious furniture with a wooden sword or crossbow.
 
 ## 📦 Install
 
@@ -46,9 +47,17 @@ Changes to server settings through **F1** now go to the server for approval and 
 
 Ghost mode hides your normal form and costumes from other players. Devcommands keeps your position off the map, including Groups and Guilds sharing.
 
+**Fly** and **Ghost** have separate switches. Fly gets you around; Ghost keeps the paparazzi away. Other admin mods keep their own settings.
+
+Open **Players → Builds** to see structures on the world map. Show zones, select a player or area, then refresh the preview. Removal saves a restore point first. Changed or busy pieces stay put.
+
+Player dates show their last login and last activity in real time. Filter for players away for 30, 60 or 90 days before planning a cleanup. Saved dates stay available after three months.
+
 **Make an NPC talk**
 
 Place and save an NPC. Create a graph, select the NPC and click **Publish & link**. Close the menu and press **E** to talk.
+
+Use **Quest builder** to choose items, encounters, NPC visits and a reward kit. It creates a graph you can edit. Replies can have separate Quests, Conversation and Trade tabs, with a reason when an option is locked. Before publishing, review what changed and which links use the graph.
 
 **Set up kits and travel**
 
@@ -74,6 +83,10 @@ Use **/trade** to invite a nearby player. Both players confirm the trade. **/cla
 
 Open **World → Props** for lights, pictures and notes. **World → Scenes** has camera shots, music and the shared media library. Scene dialogue has a Valheim frame, word colors and typing speed. Use **Browse / Import…** to add a picture or song, then save its placement or track. Only admins can place world portals and props.
 
+**Play Audio** can continue when playback starts or wait until the song finishes. NPC dialogue can use word colors, typing speed, gestures and a saved voice clip.
+
+Open **Content → Content workshop** to export linked content and media together, preview an import or check missing links. Imports arrive as drafts with placed content disabled, ready for you to check and enable.
+
 **Try a costume**
 
 Admins can open **Costume**, choose a model and press **Wear / update costume**. Creature controls use its movement and available attacks. Seagulls can walk and fly. Wings included.
@@ -82,11 +95,17 @@ Admin costumes protect you from damage and NPC targeting. Your inventory stays i
 
 Save a **Costume reward**, then add **Costume Claim** to a kit and choose that reward. Players use the claim item and wear their unlocked looks under **F8 → Costumes**. Creature rewards can walk, fly and use their available attacks. Choose appearance mode for a look that keeps normal player controls. Neither gives players god mode or invisibility.
 
+Costume access lasts **12 real hours** by default, including time offline. Set a different duration or choose unlimited access in the reward settings. Admins can change a player's expiry later.
+
 Admins can select a player under **Players** to remove their current costume or revoke costume rewards. Known players can have rewards revoked while offline too.
 
-For prop hunt, open **World → Prop hunt → Place ready arena**. Click where you want its zone and scoreboard. Players enter the zone and press **E** at the board to join. Start a round when everyone is ready. Seekers get a **Pro Hunt Sword** and must hit a prop directly. Hidden props whistle every 30 seconds by default. Change the timers, props and winner reward graph in the event settings.
+For prop hunt, open **World → Prop hunt → Place ready arena**. Click where you want its zone and scoreboard. Players enter the zone and press **E** at the board to join. Seekers use a **Pro Hunt Sword** or **Pro Hunt Crossbow** and must hit a prop directly. The crossbow needs no ammo and reloads in three seconds by default. Hidden props whistle every 30 seconds. Change weapons, timers, props and winner rewards in the event settings.
+
+Server rules can hide the maps, remove stamina costs during a round, keep hostile creatures out and protect scenery. **World → Events** also lets you build your own events with timed phases and graphs for starts, results and cleanup.
 
 The wooden scoreboard shows the round timer, joined players, wins and finds while you look at it.
+
+Props choose their first look, then press **R** for a random change from the event's list. The default cooldown is 30 seconds. Admins can change the cooldown and movement speed.
 
 Change colours and text size under **Settings → Appearance**. Players have their own Appearance page too.
 
