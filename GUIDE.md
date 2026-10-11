@@ -261,6 +261,8 @@ Menu travel, `/warp <name>` and placed warp portals use the same server-checked 
 
 These rules apply to WeaverEditor travel, including homes, checkpoints and graph teleports. Normal Valheim portals keep their own rules. Existing server settings are kept when updating. **Personal travel → Require owned ward for homes** controls the owned-ward rule and starts enabled.
 
+With Guilds and Protective Wards, use **Bind guild** on the ward and turn on **Guild access**. Current guild members can then use `/sethome` inside its range. The ward must be active. Permission to visit a ward alone does not count.
+
 ### Bring tame companions
 
 Tamed creatures following you can travel with you through WeaverEditor warps. Your ridden mount can come too. Standing livestock, wild creatures and animals following someone else stay where they are.
