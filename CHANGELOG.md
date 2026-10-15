@@ -1,5 +1,16 @@
-# 1.3.7
+# 1.3.9
 
+* Added scalable character sizes.
+* Updated admin tools to be more compatible with other admin tools.
+* Added spawner controls for zones.
+* Fixed scrolling issues throughout the menus.
+
+# 1.3.8
+
+* Fixes and improvements.
+
+# 1.3.7
+* Updated Models for keys and various Deployables
 * Fixes & improvements to the weaver editor
 * Performance tweaks
 

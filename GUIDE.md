@@ -87,6 +87,61 @@ Grave scans run when requested and show up to 2,000 graves. The menu pages the r
 
 Close the grave before moving it. You can retry if the list still says it is in use; the server checks its current state. Graves in expanded worlds use the installed world radius. For old graves missing their original spawn anchor, remote players must disconnect before Move or Undo. The menu explains when this is required.
 
+### View or change player skills
+
+As a server admin, open **Players → Online**, select a player and expand **Player skills**. Refresh their report, search for a skill, then choose **Add**, **Remove** or **Set**. Review the old and new levels before confirming. Levels stay within the game’s range and total skill cap.
+
+The list includes skills registered with the game, plus supported SkillManager registrations. Unused registered skills start at zero. An unrelated mod’s separate experience system may need its own integration. Players must be online with the same WeaverEditor build, and server inspection must be enabled. These controls are for server admins; staff roles alone do not grant skill editing.
+
+**Review undo** restores your last confirmed edit to that player for up to ten minutes during the current server session. It restores the previous level and experience exactly. New experience, another edit or a changed character prevents undo, so it cannot overwrite fresh progress.
+
+### Change a player's size
+
+As a server admin, open **Players → Online**, select someone and expand **Player size**. Enter a multiplier from **0.1× to 10×** and choose **Apply size**. **Your size** changes your own character. **Reset to 1×** restores normal size.
+
+The size stays saved for that player in this world, including after reconnecting. Other players see it too. Walking pace, stride, jump height, equipped weapons, tools and armor follow the size. Fall damage uses the drop relative to your size; real cliffs can still hurt. Health and stamina keep their normal values. Costume size combines with the player size, so reset to **1×** when you want the costume's usual fit.
+
+The third person camera follows the resized character. If you use Azumatt's FirstPersonMode, its camera follows the resized head and keeps your configured field of view and offsets. FirstPersonMode remains optional.
+
+### Change size from a graph
+
+Add **Set Player Size** to an action node and choose a size from **0.1× to 10×**.
+
+* **Permanent** saves the player's size until an admin or another graph changes it.
+* **While inside zone** uses a saved zone. It changes the size only while the player is inside that enabled zone, without changing their saved size.
+
+Link the graph to the zone's **Enter** event to resize each arriving player. Keep **Once** off if it should happen on every visit. Leaving restores their saved size automatically; no exit graph is needed. With overlapping size zones, the last changed zone takes priority. Leaving it restores an earlier size zone if one still applies.
+
+An admin or permanent graph can update the saved size while a zone size is active. The zone keeps its size until the player leaves, then the latest saved size takes over. **Player Size** condition nodes compare the current size using **Equal to**, **At least** or **At most**.
+
+### Giant footsteps
+
+Growing players gain deeper, heavier footsteps using Valheim's troll sounds. Normal size keeps its usual footsteps.
+
+Under **Server presentation**, **Giant footstep volume (%)** starts at **50** and is shared with everyone. Change it while the server is running. **0** removes the added thumps and keeps ordinary footsteps. Each player's usual game sound settings still apply.
+
+### Restore an item
+
+Open **View inventory → Give item** for the selected online player. Choose the item, quantity and quality. **Items → Item options** opens the same controls for your own character. The target’s inventory must have room for the whole grant.
+
+With a supported Epic Loot build on the server and clients, choose a tier, add eligible enchantments and set their values. Only effects supported by that item and tier are listed. Vanilla quality controls work without Epic Loot. Missing or unsupported integrations leave existing item data intact and hide their extra controls.
+
+Item and skill changes appear in **History**. Refresh before retrying when a player changes character, disconnects or their inventory changes.
+
+Select an inspected item and choose **Copy item settings** to prepare its quality and supported Epic Loot tier and effects. Review the quantity and settings before giving it. The original item stays where it is. The server and player both check that the inspected source has not changed. Unsupported extra data, including some named, set or socketed equipment, uses quality only and shows a notice rather than guessing how to recreate it.
+
+### Preview the player journal
+
+Open **Dashboard → Player menu preview** and choose **Regular player** or a known player. Regular player starts with no personal progress. Selecting someone reads their saved quests, homes, wallet and costume rewards without changing their account. Staff tools are hidden from this view, even when the selected player has a staff role.
+
+The banner keeps **Exit preview**, **Switch player** and **Why is it hidden?** within reach. The details explain hidden pages and server rules. Travel, purchases, rewards and other changes are blocked during preview. Your admin powers stay active. Finish pending inventory or travel actions before opening it.
+
+Carried items, combat, client-local party data and the player's personal appearance settings cannot be reproduced here. Offline players also lack live nearby-player and guild details. Exit preview before testing those with the actual player.
+
+### Check optional integrations
+
+Open **Mods → Integration status** for the installed versions and available item and skill features on this client or host. Use **Rescan integrations** after loading content. Epic Loot adds tier and enchantment controls through its supported API; missing or changed APIs leave ordinary quality controls available. The panel reports known integrations and native registered content. It does not rewrite another mod's code or private save format.
+
 ### Spectate an online player
 
 Open **Players → Online**, select a player and choose **Spectate**. Your camera follows their view area while your own player stays where you left them. Move the mouse to look around and use the wheel to change camera distance. Press **Esc** to return, or hold **Alt** and click **Stop**.
@@ -244,7 +299,7 @@ A newer successful WeaverEditor teleport replaces the saved point. Failed travel
 
 These are saved destinations, not `/tp` requests to other players. No player acceptance or role assignment is needed for a public warp. Duplicate names ask you to choose from the menu instead of picking an arbitrary destination.
 
-Create a destination under **F8 → Travel → New warp here**. **Available to everyone with /warp (no role needed)** is enabled for new destinations. Existing public warps remain public. Existing private warps are not silently opened: select one, enable that option, and **Save warp** once to open it to every current and future player. You do not have to register or assign each player.
+Create a destination under **F8 → Travel → New warp here**. **Show in /warp for everyone** starts enabled. Every current and future player can use that destination without a role or assignment. Turn it off for a private destination that players reach only through an enabled physical portal. It stays hidden from their warp lists and cannot be reached by typing its name or sending its saved ID.
 
 The host/server controls this with its existing setting in `BepInEx/config/com.variantmods.weaver.cfg`:
 
@@ -253,7 +308,7 @@ The host/server controls this with its existing setting in `BepInEx/config/com.v
 Public travel = true
 ```
 
-It defaults to `true`; a previously saved `false` setting is respected. Enable it on the host/server and restart if you intentionally disabled public travel earlier. Client config cannot override it. Private warps still require **players.teleport**; creating/editing/deleting warps still requires **world.edit**. Public warps do not grant `/tp`, Bring, coordinate teleports, editing or Costume access.
+It defaults to `true`; a previously saved `false` setting is respected. Enable it on the host/server and restart if you intentionally disabled public travel earlier. Client config cannot override it. Staff with **players.teleport** can still use private destinations remotely. Creating, editing and deleting destinations requires **world.edit**; only server admins place physical portals. Portal access does not grant `/tp`, Bring, coordinate teleports, editing or Costume access.
 
 Menu travel, `/warp <name>` and placed warp portals use the same server-checked destination and per-player cooldown. Enabled combat, encumbrance and restricted-item rules still apply. The existing successful-trip `/return` and failure/refund handling stay in place. No warp can supply its own client-chosen coordinates or move another player.
 
@@ -535,7 +590,7 @@ Save a **Test scenario** under **Setup and links** to repeat a preview with chos
 
 ### Give NPC conversations some character
 
-In a Dialogue node's **Presentation** section, choose a text colour, typing speed, NPC portrait, gesture or saved voice clip. Turn on **Use text color tags** for words such as `<color=#FFCC00>gold words</color>`. `{player}` inserts the listener's name and `{npc}` inserts the speaker's name. Space reveals the rest of a typed line.
+In a Dialogue node's **Presentation** section, choose a text colour, typing speed, NPC portrait, gesture or saved voice clip. The portrait shows the speaking NPC's face and outfit. A graph without an NPC uses a general icon. Turn on **Use text color tags** for words such as `<color=#FFCC00>gold words</color>`. `{player}` inserts the listener's name and `{npc}` inserts the speaker's name. Space reveals the rest of a typed line.
 
 In an Option node's **Reply details and requirements**, choose **Conversation**, **Quests** or **Trade**. Add item, rank or quest requirements, then show the reply with a locked reason or hide it until available. The server checks requirements again when the player chooses it. A quest key and reward kit add an objective and reward preview beside the replies.
 
@@ -577,11 +632,23 @@ In WeaverEditor, choose **Action → Trigger NPC Spawner**, then select the save
 
 Spawners require a graph, zone or manual **Spawn now** trigger. WeaverEditor clears their surviving enemies after a server restart without loot or victory rewards.
 
+Open **Patrol** to choose how new creatures move between fights:
+
+* **Radius** picks destinations around the spawner, separate from its spawn radius.
+* **Zone** picks destinations inside an enabled nearby zone.
+* **Points** follows your placed route in order, then loops. Use **Place patrol points**, click to add points and press **Esc** to return. **PgUp / PgDn** adjusts the point height.
+
+Set the pause at each destination and save the spawner before triggering it. Old spawners keep normal creature behaviour. Patrols use native pathfinding and pause for combat; creatures can take detours or chase enemies outside the patrol area. Ground creatures use terrain height. Flying and swimming creatures keep their normal movement constraints.
+
 ### Start an event from a zone
 
 Create a sphere or box under **Zones**, place it and save it. In the graph's **Link to** controls, select the zone and the event you want: Enter, Exit, Stay, First or Last. Use **Publish & link** to save that connection.
 
 **View zone** shows the area with WeaverEditor out of the way; press **Esc** to return. **World markers** shows nearby zones and spawner eggs while moving around.
+
+Under **Area rules**, enable **Keep ordinary enemies out** to protect a marketplace or custom encounter area. It stays active whenever the zone is enabled, even without a running event. It allows players, tamed creatures, WeaverEditor encounters and Odin Hates Litter event enemies. Wards keep their usual owner and permitted-player rules.
+
+Use **Action → Keep Zone Enemies Out** to change the rule from a graph. **Condition → Zone Enemy Protection Enabled** follows True when both the zone and its protection are enabled. Neither node changes ward ownership or access.
 
 Zone previews have translucent walls and clear outlines, including the full sphere surface. Adjust **Settings → Appearance → Zone wall opacity** to make them stronger or lighter. Set it to 0 for outlines only. These previews are visible only to admins with zone editing permission.
 
@@ -609,7 +676,7 @@ WeaverEditor travel is blocked during combat and for **20 seconds afterward**, i
 
 ## Portals, lights, pictures and notes
 
-Under **Travel**, create a destination, then add a **World portal** and choose that destination. Place and save it. Players press **E** to travel; access, cooldown and combat rules still apply. Removing its destination leaves the portal inactive until you link another one.
+Under **Travel**, create a destination, then add a **World portal** and choose that destination. Place and save it. Players press **E** to travel. An enabled portal works for everyone nearby, even when its destination is private and hidden from **/warp**. Public travel, cooldown, combat and item rules still apply. Disabling a portal blocks its use. Removing its destination leaves it inactive until you link another one.
 
 Open **World → Props** and choose Lights, Images & flags or Notes. Create the prop, set its appearance, place it and save. For images, turn off **Show wooden backboard** to display just the image. Flags have a **Show wooden flag pole** toggle. Existing images keep their backing until you change it.
 

@@ -12,8 +12,9 @@ Create conversations, shops and events for Valheim. Connect nodes to choose what
 * **🎁 Kits:** Give each item its own chance to appear. Wood for everyone, fancy armour for the lucky ones.
 * **🌀 Travel:** Create destinations and physical portals. Players use **/warp** or press **E** at a portal.
 * **🏮 World tools:** Place lights, pictures, flags and notes. Build camera scenes with music and subtitles.
+* **🐾 Spawner patrols:** Let creatures roam a radius, patrol a zone or follow points you place. Use a graph to start the encounter.
 * **🤝 Community:** Use clans, trading, homes, checkpoints and optional wallets.
-* **🛠️ Admin tools:** Manage players, recover graves, inspect inventories, clean up builds from the map and wear creature costumes.
+* **🛠️ Admin tools:** Manage players, edit registered skills, restore items, recover graves, clean up builds from the map and wear creature costumes.
 * **🎭 Costume rewards:** Give players creature movement and attacks through kits or graphs. They stay visible and take normal damage.
 * **🔍 Prop hunt:** Place a ready arena, join at its scoreboard and hunt the suspicious furniture with a wooden sword or crossbow.
 
@@ -25,7 +26,7 @@ Install **BepInExPack Valheim**, then import the ZIP into **Gale** or your mod m
 
 For a manual install, copy `plugins/VariantWeaver` from the ZIP into `BepInEx/plugins`. Keep both DLLs together.
 
-When updating, replace the old DLLs and **keep your configs**. WeaverEditor replaces Variant Weaver. The package, folder and DLL names stay the same so existing installs can update.
+When updating, replace the old plugin folder and **keep your configs**. WeaverEditor replaces Variant Weaver. The package, folder and DLL names stay the same so existing installs can update.
 
 ## 🚀 Get started
 
@@ -39,9 +40,19 @@ Open **Players → Graves**, refresh the list and choose a grave. Move it to you
 
 **Known players** keeps player records and staff notes. **History** helps you find who changed what and when.
 
+Under **Players → Online**, select a player and open **Player skills** to view or change their levels. Registered modded skills appear too. **View inventory → Give item** lets admins choose item quality, with tier and enchantment choices when Epic Loot is installed. Changes are checked by the server and recorded in History.
+
+Use **Dashboard → Player menu preview** to check the regular player journal or a known player's saved progress. It is read only, with an **Exit preview** button. Your admin account stays intact.
+
+Skill edits have a short undo window while the player's experience stays unchanged. In an inspected inventory, **Copy item settings** prepares a recovery item for review. **Mods → Integration status** shows which supported extras are available.
+
+**Player size** changes yourself or an online player from **0.1× to 10×**. Walking, jumping, equipped gear and camera height follow the size. Fall damage uses the character's size too. It stays saved for this world until an admin changes it or chooses **Reset to 1×**.
+
+Use **Set Player Size** in a graph for a saved size or a temporary size inside a linked zone. **Player Size** conditions check the current size. Bigger players gain heavier footsteps, with a shared volume setting that starts at **50%**.
+
 Select an online player and choose **Spectate** to follow them with your camera. Mouse looks around, the wheel changes distance, and **Esc** returns to your player.
 
-Under **Settings → Player menu visibility**, choose which F8 pages regular players see. You can hide Clans or Wallet without deleting anything or switching those features off. Admins keep every page.
+Under **Settings → Player menu visibility**, choose which F8 pages regular players see. You can hide Clans or Wallet without deleting anything or switching those features off. Changes also refresh an open player preview. Admins keep every page.
 
 Changes to server settings through **F1** now go to the server for approval and saving. Personal appearance and sound choices stay yours.
 
@@ -65,7 +76,7 @@ Add kits under **Community → Kits** and destinations under **Travel**. Players
 
 Select a kit item and set **Chance (%)** from 0 to 100. Each item rolls separately. Old entries stay at 100%. These chances also work for chests, graph rewards and spawner loot.
 
-New warps are public. For an older private destination, enable **Available to everyone with /warp** and save it. The server's **Public travel** setting must be on.
+New warps appear in **/warp** for everyone. Turn off **Show in /warp for everyone** to hide a destination from players' lists and commands. Its enabled physical portals still work for everyone, including new players. The server's **Public travel** setting must be on.
 
 When the server blocks restricted items, store metals, Dragon Eggs and other blocked items before travelling. Backpack contents count too. Normal portals keep their own rules.
 
@@ -87,6 +98,8 @@ Open **World → Props** for lights, pictures and notes. **World → Scenes** ha
 
 Open **Content → Content workshop** to export linked content and media together, preview an import or check missing links. Imports arrive as drafts with placed content disabled, ready for you to check and enable.
 
+Under **Spawners → Patrol**, choose **Radius**, **Zone** or **Points**. Place route points in the world, return to the menu and save the spawner. A graph's **Trigger NPC Spawner** action uses the saved patrol. These settings apply to future spawns; creatures still fight and flee normally.
+
 **Try a costume**
 
 Admins can open **Costume**, choose a model and press **Wear / update costume**. Creature controls use its movement and available attacks. Seagulls can walk and fly. Wings included.
@@ -102,6 +115,10 @@ Admins can select a player under **Players** to remove their current costume or 
 For prop hunt, open **World → Prop hunt → Place ready arena**. Click where you want its zone and scoreboard. Players enter the zone and press **E** at the board to join. Seekers use a **Pro Hunt Sword** or **Pro Hunt Crossbow** and must hit a prop directly. The crossbow needs no ammo and reloads in three seconds by default. Hidden props whistle every 30 seconds. Change weapons, timers, props and winner rewards in the event settings.
 
 Server rules can hide the maps, remove stamina costs during a round, keep hostile creatures out and protect scenery. **World → Events** also lets you build your own events with timed phases and graphs for starts, results and cleanup.
+
+Running prop hunts show a thin boundary around the arena. Change its colour, width, height and visibility under **Player boundary**, or use the shared **Prop hunt** settings. The outside warning keeps its own grace timer.
+
+For a marketplace or custom boss area, enable **Zones → Area rules → Keep ordinary enemies out**. It works whenever the zone is enabled, without an event running. WeaverEditor and Odin Hates Litter encounter creatures are allowed, and wards keep their ownership and access rules. Graphs can turn protection on or off with **Keep Zone Enemies Out**, or check it with **Zone Enemy Protection Enabled**.
 
 The wooden scoreboard shows the round timer, joined players, wins and finds while you look at it.
 
