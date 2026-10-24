@@ -1,3 +1,13 @@
+# 1.4.1
+
+* Fixed vendors and travel.
+* Better recovery from server lag.
+* Clearer error messages.
+
+# 1.4.0
+
+* Fixed light placement in new light models
+
 # 1.3.9
 
 * Added scalable character sizes.

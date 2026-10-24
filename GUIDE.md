@@ -37,7 +37,9 @@ The deed copies the NPC's appearance when placed. Its conversation, graph and ad
 
 ### Open your shop
 
-Use the deed from your inventory, choose a nearby spot, and left-click to place it. **Q/E** turns it; **Esc** cancels. The deed is consumed only after placement succeeds. Press **E** at the vendor to open its shop.
+Use the deed from your inventory, choose a nearby spot, and left-click to place it. **Q/E** turns it; **Esc** cancels. The deed is saved with the placement receipt, then the server creates the vendor after confirming that save. Press **E** at the vendor to open its shop.
+
+If placement is waiting, open **F8 → My Vendors** to see its reserved location and confirmation status. Recovery retries automatically. **Retry confirmation** checks the same placement again with the original character; it does not use another deed. Keep your receipt files if a transfer remains held for recovery.
 
 Under **Stock**, choose an unequipped inventory item, enter the lot size, and choose the payment item and price. For example, deposit one chest piece and ask for **250 Stone**. Confirming removes those items from your inventory and lists that one lot. Buyers review the goods and payment before purchasing. Quality, condition and saved item details stay with the item.
 
@@ -848,9 +850,13 @@ Server performance defaults are **200 active WeaverEditor creatures** and **40 n
 | Browse does not open on Linux/macOS | Use a full local file path in Media library; the native picker is Windows-only. |
 | A group member cannot be saved | Save the group unlocked first; a locked camera point locks its shot. |
 | Music is silent | Check the matching Shared server audio / Internet audio setting, server script policy and the audio status/error. |
+| A vendor placement or purchase is still pending | Wait for the character save to finish. Reopen My Vendors to resume the pending transfer. Avoid buying another deed or repeating the purchase. |
+| A teleport destination takes too long to load | WeaverEditor returns you to the departure point if it can safely recover its own teleport. Let the area finish loading before trying again. |
 | A server restart loses content | Check that the server retains its WeaverEditor config folder and world identity. Restore your backup if needed. |
 
 If an older build already cleared a link, select its NPC or zone and use **Publish & link** after updating. For unresolved problems, include the mod version, what you clicked and the relevant client/server `BepInEx/LogOutput.log`.
+
+Admins can change popup wording in **Action messages**. The server sends these settings to players. Travel messages explain whether an item, combat, access or a loading delay is blocking the trip. Existing custom messages stay in place after updating.
 
 ## Inspiration and credit
 
